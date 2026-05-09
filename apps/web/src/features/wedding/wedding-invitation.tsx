@@ -14,7 +14,6 @@ import { GallerySection } from "./components/gallery-section";
 import { GiftSection } from "./components/gift-section";
 import { HeroSection } from "./components/hero-section";
 import { InvitationMessageSection } from "./components/invitation-message-section";
-import { LoadingScreen } from "./components/loading-screen";
 import { LocationSection } from "./components/location-section";
 import { downloadWeddingCalendar } from "./utils/calendar";
 import { getWeddingDDay } from "./utils/date";
@@ -26,7 +25,6 @@ type Attendance = "yes" | "no";
 export function WeddingInvitation() {
   const [isRsvpOpen, setIsRsvpOpen] = useState(false);
   const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [rsvpAttendance, setRsvpAttendance] = useState<Attendance | null>(null);
   const [dDay] = useState(getWeddingDDay);
   const { scrollYProgress } = useScroll();
@@ -54,8 +52,6 @@ export function WeddingInvitation() {
 
   return (
     <div className="wedding-page flex min-h-screen justify-center bg-neutral-50 selection:bg-brand-gold/20">
-      <AnimatePresence>{isLoading ? <LoadingScreen /> : null}</AnimatePresence>
-
       <div className="relative flex w-full max-w-[420px] flex-col overflow-hidden bg-white shadow-2xl">
         <motion.div
           className="fixed inset-x-0 top-0 z-[60] mx-auto h-1 max-w-[420px] origin-left bg-brand-gold"
@@ -63,7 +59,7 @@ export function WeddingInvitation() {
         />
 
         <FloatingHearts />
-        <HeroSection onIntroComplete={() => setIsLoading(false)} />
+        <HeroSection />
         <InvitationMessageSection />
         <Divider />
         <CoupleProfileSection />

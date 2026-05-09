@@ -10,15 +10,37 @@ type CalendarSectionProps = {
 };
 
 const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"] as const;
-const OCTOBER_2026_DAYS = Array.from({ length: 31 }, (_, index) => index + 1);
+const MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+] as const;
 
 export function CalendarSection({ dDay }: CalendarSectionProps) {
   const { couple, event } = weddingContent;
+  const weddingDate = new Date(event.dateTime);
+  const monthName = MONTH_NAMES[weddingDate.getMonth()];
+  const weddingDay = weddingDate.getDate();
+  const daysInMonth = new Date(weddingDate.getFullYear(), weddingDate.getMonth() + 1, 0).getDate();
+  const firstWeekday = new Date(weddingDate.getFullYear(), weddingDate.getMonth(), 1).getDay();
+  const calendarCells = [
+    ...Array.from({ length: firstWeekday }, (_, index) => ({ id: `blank-${index}`, day: null })),
+    ...Array.from({ length: daysInMonth }, (_, index) => ({ id: `day-${index + 1}`, day: index + 1 })),
+  ];
 
   return (
     <section className="bg-white px-6 py-20">
       <div className="mb-12 text-center">
-        <h2 className="mb-4 text-sm uppercase tracking-[0.4em] text-brand-gold">October</h2>
+        <h2 className="mb-4 text-sm uppercase tracking-[0.4em] text-brand-gold">{monthName}</h2>
         <p className="font-serif text-xl">{event.dateLabel}</p>
         <p className="mt-2 text-sm text-brand-muted">{event.dayTimeLabel}</p>
       </div>
@@ -34,11 +56,15 @@ export function CalendarSection({ dDay }: CalendarSectionProps) {
             </div>
           ))}
 
-          {OCTOBER_2026_DAYS.map((day, index) => {
-            const isWeddingDay = day === 18;
+          {calendarCells.map(({ id, day }, index) => {
+            const isWeddingDay = day === weddingDay;
+
+            if (day === null) {
+              return <div key={id} aria-hidden="true" />;
+            }
 
             return (
-              <div key={day} className="relative py-2">
+              <div key={id} className="relative py-2">
                 <span
                   className={cn(
                     "relative z-10",
