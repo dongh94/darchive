@@ -61,17 +61,11 @@ export function WeddingInvitation() {
         <FloatingHearts />
         <HeroSection />
         <InvitationMessageSection />
-        <Divider />
         <CoupleProfileSection />
-        <Divider />
         <CalendarSection dDay={dDay} />
-        <Divider />
         <GallerySection />
-        <Divider />
         <LocationSection />
-        <Divider />
         <GiftSection copiedAccount={copiedAccount} copyToClipboard={copyToClipboard} />
-        <Divider />
         <ClosingSection addToCalendar={downloadWeddingCalendar} onShare={handleShare} />
 
         <footer className="border-t border-brand-gold/5 bg-brand-beige/20 py-12 text-center">

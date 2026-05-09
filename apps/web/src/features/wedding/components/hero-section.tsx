@@ -15,7 +15,7 @@ export function HeroSection() {
     const timer = window.setTimeout(() => {
       setIsIntroVisible(false);
       document.body.style.overflow = "unset";
-    }, 1450);
+    }, 1250);
 
     return () => {
       document.body.style.overflow = "unset";
@@ -42,32 +42,30 @@ export function HeroSection() {
           <motion.div
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="absolute inset-0 z-50 overflow-hidden [perspective:1000px]"
+            className="absolute inset-0 z-50 overflow-hidden"
           >
             <motion.div
-              initial={{ rotateY: 0, x: 0 }}
-              animate={{ rotateY: -78, x: "-8%" }}
-              transition={{ delay: 0.24, duration: 1.05, ease: [0.65, 0, 0.35, 1] }}
-              className="absolute inset-y-0 left-0 w-1/2 origin-left bg-brand-cream shadow-[18px_0_35px_rgba(44,44,44,0.18)] [backface-visibility:hidden] [transform-style:preserve-3d]"
+              initial={{ x: 0 }}
+              animate={{ x: "-102%" }}
+              transition={{ delay: 0.12, duration: 0.95, ease: [0.65, 0, 0.35, 1] }}
+              className="absolute inset-y-0 left-0 w-1/2 bg-brand-cream shadow-[12px_0_28px_rgba(44,44,44,0.16)]"
             >
-              <DoorPanel side="left" imageUrl="/images/wedding/main-portrait.jpeg" />
+              <RevealPanel side="left" imageUrl="/images/wedding/main-portrait.jpeg" />
             </motion.div>
             <motion.div
-              initial={{ rotateY: 0, x: 0 }}
-              animate={{ rotateY: 78, x: "8%" }}
-              transition={{ delay: 0.24, duration: 1.05, ease: [0.65, 0, 0.35, 1] }}
-              className="absolute inset-y-0 right-0 w-1/2 origin-right bg-brand-cream shadow-[-18px_0_35px_rgba(44,44,44,0.18)] [backface-visibility:hidden] [transform-style:preserve-3d]"
+              initial={{ x: 0 }}
+              animate={{ x: "102%" }}
+              transition={{ delay: 0.12, duration: 0.95, ease: [0.65, 0, 0.35, 1] }}
+              className="absolute inset-y-0 right-0 w-1/2 bg-brand-cream shadow-[-12px_0_28px_rgba(44,44,44,0.16)]"
             >
-              <DoorPanel side="right" imageUrl="/images/wedding/main-portrait.jpeg" />
+              <RevealPanel side="right" imageUrl="/images/wedding/main-portrait.jpeg" />
             </motion.div>
             <motion.div
-              initial={{ opacity: 1 }}
-              animate={{ opacity: 0 }}
-              transition={{ delay: 0.4, duration: 0.24, ease: "easeOut" }}
-              className="absolute inset-0 flex items-center justify-center"
-            >
-              <div className="h-16 w-px bg-brand-gold/45" />
-            </motion.div>
+              initial={{ opacity: 0, scaleX: 0.05 }}
+              animate={{ opacity: [0, 0.55, 0], scaleX: [0.05, 1, 1.15] }}
+              transition={{ delay: 0.1, duration: 0.85, ease: [0.25, 1, 0.5, 1] }}
+              className="absolute inset-y-0 left-1/2 w-16 -translate-x-1/2 origin-center bg-gradient-to-r from-transparent via-white/70 to-transparent"
+            />
           </motion.div>
         ) : null}
       </AnimatePresence>
@@ -89,7 +87,7 @@ export function HeroSection() {
   );
 }
 
-function DoorPanel({ side, imageUrl }: { side: "left" | "right"; imageUrl: string }) {
+function RevealPanel({ side, imageUrl }: { side: "left" | "right"; imageUrl: string }) {
   const isLeft = side === "left";
 
   return (
@@ -105,8 +103,7 @@ function DoorPanel({ side, imageUrl }: { side: "left" | "right"; imageUrl: strin
           sizes="420px"
         />
       </div>
-      <div className={isLeft ? "absolute inset-y-0 right-0 w-px bg-white/50" : "absolute inset-y-0 left-0 w-px bg-white/50"} />
-      <div className={isLeft ? "absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-black/20 to-transparent" : "absolute left-0 top-0 h-full w-8 bg-gradient-to-r from-black/20 to-transparent"} />
+      <div className={isLeft ? "absolute inset-y-0 right-0 w-px bg-white/35" : "absolute inset-y-0 left-0 w-px bg-white/35"} />
     </div>
   );
 }

@@ -13,18 +13,17 @@ export function InvitationMessageSection() {
         className="space-y-6"
       >
         <div className="space-y-2 font-serif text-[15px] italic leading-relaxed text-brand-ink/80 md:text-base">
-          <p>I just try to live every day</p>
-          <p>as if I&apos;ve deliberately come back to this one day.</p>
+          <p>We&apos;re all traveling through time together,</p>
+          <p>every day of our lives.</p>
         </div>
 
         <div className="space-y-1 text-[15px] leading-relaxed text-brand-ink md:text-base">
-          <p>나는 매일을 살아가려 해요.</p>
-          <p>마치 이 하루를 다시 살기 위해</p>
-          <p>돌아온 것처럼.</p>
+          <p>우리는 모두 매일,</p>
+          <p>함께 시간을 여행하고 있습니다.</p>
         </div>
 
         <p className="text-[11px] font-medium uppercase tracking-widest text-brand-gold">
-          &lt;어바웃 타임&gt;, Tim Lake 대사 中
+          &lt;어바웃 타임&gt; 中
         </p>
       </motion.div>
 
@@ -43,21 +42,38 @@ export function InvitationMessageSection() {
         transition={{ delay: 0.8, duration: 1.2 }}
         className="space-y-8 text-sm leading-8 text-brand-ink md:text-[15px]"
       >
-        <h3 className="mb-4 font-serif text-xl text-brand-gold">저희 결혼합니다</h3>
+        <h3 className="font-serif text-xl leading-none text-brand-ink">
+          <span
+            className="px-1"
+            style={{
+              backgroundImage: "linear-gradient(to top, rgba(197, 160, 89, 0.34) 48%, transparent 48%)",
+              backgroundRepeat: "no-repeat",
+            }}
+          >
+            저희 결혼합니다.
+          </span>
+        </h3>
 
         <p>
-          다시 돌아오고 싶은 하루들 속에<br />
-          늘 서로가 있었습니다.
+          우리는 모두<br />
+          매일 조금씩 시간을 여행하며 살아갑니다.
         </p>
 
         <p>
-          함께 웃던 시간,<br />
-          서로에게 기대던 계절들이 모여<br />
+          그 시간들 속에서<br />
+          저희는 서로를 만났고,<br />
+          수많은 평범한 하루를 함께 지나왔습니다.
+        </p>
+
+        <p>
+          함께 웃던 날들,<br />
+          서로의 곁을 지켜주던 계절들이 모여<br />
           이제 하나의 약속이 되었습니다.
         </p>
 
         <p>
-          저희가 함께 맞이할 첫날에<br />
+          저희가 함께 걸어갈<br />
+          새로운 시간의 첫날에<br />
           소중한 분들을 모시고 싶습니다.
         </p>
 
