@@ -63,16 +63,22 @@ export function WeddingInvitation() {
         <FloatingHearts />
         <HeroSection />
         <InvitationMessageSection />
+        <Divider />
         <CoupleProfileSection />
+        <Divider />
         <CalendarSection dDay={dDay} />
+        <Divider />
         <GallerySection />
+        <Divider />
         <LocationSection />
+        <Divider />
         <GiftSection copiedAccount={copiedAccount} copyToClipboard={copyToClipboard} />
+        <Divider />
         <ClosingSection addToCalendar={downloadWeddingCalendar} onShare={handleShare} />
 
         <footer className="border-t border-brand-gold/5 bg-brand-beige/20 py-12 text-center">
           <p className="text-[10px] uppercase tracking-[0.4em] text-brand-gold opacity-60">
-            © 2026 Salon de Letter. All Rights Reserved.
+            Crafted with love by Donghee Kim
           </p>
         </footer>
       </div>

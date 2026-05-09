@@ -10,25 +10,9 @@ type CalendarSectionProps = {
 };
 
 const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"] as const;
-const MONTH_NAMES = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-] as const;
-
 export function CalendarSection({ dDay }: CalendarSectionProps) {
   const { couple, event } = weddingContent;
   const weddingDate = new Date(event.dateTime);
-  const monthName = MONTH_NAMES[weddingDate.getMonth()];
   const weddingDay = weddingDate.getDate();
   const daysInMonth = new Date(weddingDate.getFullYear(), weddingDate.getMonth() + 1, 0).getDate();
   const firstWeekday = new Date(weddingDate.getFullYear(), weddingDate.getMonth(), 1).getDay();
@@ -40,7 +24,7 @@ export function CalendarSection({ dDay }: CalendarSectionProps) {
   return (
     <section className="bg-white px-6 py-20">
       <div className="mb-12 text-center">
-        <h2 className="mb-4 text-sm uppercase tracking-[0.4em] text-brand-gold">{monthName}</h2>
+        <h2 className="mb-4 text-sm uppercase tracking-[0.4em] text-brand-gold">Date</h2>
         <p className="font-serif text-xl">{event.dateLabel}</p>
         <p className="mt-2 text-sm text-brand-muted">{event.dayTimeLabel}</p>
       </div>

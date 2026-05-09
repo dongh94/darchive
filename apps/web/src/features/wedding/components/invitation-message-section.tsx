@@ -1,10 +1,23 @@
 "use client";
 
 import { motion } from "motion/react";
+import { Divider } from "./divider";
 
 export function InvitationMessageSection() {
   return (
-    <section className="space-y-12 bg-white px-10 py-24 text-center">
+    <>
+      <InvitationQuote />
+      <Divider />
+      <InvitationBody />
+    </>
+  );
+}
+
+function InvitationQuote() {
+  return (
+    <section className="bg-white px-10 py-24 text-center">
+      <SectionTitle>Quote</SectionTitle>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -13,33 +26,31 @@ export function InvitationMessageSection() {
         className="space-y-6"
       >
         <div className="space-y-2 font-serif text-[15px] italic leading-relaxed text-brand-ink/80 md:text-base">
-          <p>We&apos;re all traveling through time together,</p>
-          <p>every day of our lives.</p>
+          <p>All we can do is do our best</p>
+          <p>to relish this remarkable ride.</p>
         </div>
 
         <div className="space-y-1 text-[15px] leading-relaxed text-brand-ink md:text-base">
-          <p>우리는 모두 매일,</p>
-          <p>함께 시간을 여행하고 있습니다.</p>
+          <p>우리가 할 수 있는 건,</p>
+          <p>이 놀라운 여정을 마음껏 누리는 것뿐입니다.</p>
         </div>
 
-        <p className="text-[11px] font-medium uppercase tracking-widest text-brand-gold">
-          &lt;어바웃 타임&gt; 中
-        </p>
+        <p className="text-[11px] font-medium uppercase tracking-widest text-brand-gold">&lt;어바웃 타임&gt; 中</p>
       </motion.div>
+    </section>
+  );
+}
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.25, duration: 0.9 }}
-        className="mx-auto h-px w-12 bg-brand-gold/20"
-      />
+function InvitationBody() {
+  return (
+    <section className="bg-white px-10 py-24 text-center">
+      <SectionTitle>Invitation</SectionTitle>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ delay: 0.32, duration: 0.85, ease: "easeOut" }}
+        transition={{ delay: 0.12, duration: 0.85, ease: "easeOut" }}
         className="space-y-8 text-sm leading-8 text-brand-ink md:text-[15px]"
       >
         <h3 className="font-serif text-xl leading-none text-brand-ink">
@@ -55,33 +66,37 @@ export function InvitationMessageSection() {
         </h3>
 
         <p>
-          우리는 모두<br />
-          매일 조금씩 시간을 여행하며 살아갑니다.
+          돌아보면 사랑은<br />
+          거창한 순간보다<br />
+          평범한 하루들 속에 있었습니다.
         </p>
 
         <p>
-          그 시간들 속에서<br />
-          저희는 서로를 만났고,<br />
-          수많은 평범한 하루를 함께 지나왔습니다.
+          함께 걷던 길,<br />
+          별일 없이 나누던 웃음,<br />
+          말없이 기대던 계절들이<br />
+          저희에게는 가장 특별한 시간이었습니다.
         </p>
 
         <p>
-          함께 웃던 날들,<br />
-          서로의 곁을 지켜주던 계절들이 모여<br />
-          이제 하나의 약속이 되었습니다.
+          이제 저희는<br />
+          서로의 하루를 더 오래 함께 누리기로 약속합니다.
         </p>
 
         <p>
-          저희가 함께 걸어갈<br />
-          새로운 시간의 첫날에<br />
+          그 첫걸음이 되는 날,<br />
           소중한 분들을 모시고 싶습니다.
         </p>
 
         <p>
-          오셔서 따뜻한 마음으로<br />
-          저희의 시작을 축복해 주세요.
+          오셔서 저희의 시작을<br />
+          따뜻하게 축복해 주세요.
         </p>
       </motion.div>
     </section>
   );
+}
+
+function SectionTitle({ children }: { children: string }) {
+  return <h2 className="mb-12 text-sm font-medium uppercase tracking-[0.4em] text-brand-gold">{children}</h2>;
 }

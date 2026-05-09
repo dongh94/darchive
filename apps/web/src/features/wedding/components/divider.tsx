@@ -2,13 +2,13 @@ import { motion } from "motion/react";
 
 export function Divider() {
   return (
-    <div className="flex justify-center py-12">
+    <div className="flex justify-center bg-white py-1">
       <motion.div
-        initial={{ height: 0 }}
-        whileInView={{ height: 48 }}
+        initial={{ opacity: 0, width: 0 }}
+        whileInView={{ opacity: 1, width: 48 }}
         viewport={{ once: true }}
-        transition={{ duration: 1, ease: "easeInOut" }}
-        className="w-px bg-brand-gold/30"
+        transition={{ duration: 0.8, ease: "easeInOut" }}
+        className="h-px bg-brand-gold/20"
       />
     </div>
   );

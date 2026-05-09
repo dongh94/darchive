@@ -20,39 +20,42 @@ function ProfileCard({ profile, imageSide }: { profile: CoupleProfile; imageSide
   const isImageRight = imageSide === "right";
 
   return (
-    <div className={cn("flex items-start gap-5", isImageRight && "flex-row-reverse")}>
-      <motion.div
-        initial={{ opacity: 0, x: isImageRight ? 24 : -24 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.2 }}
-        className="w-[43%] shrink-0 space-y-3 text-center"
-      >
-        <div className="relative aspect-[3/4] overflow-hidden rounded-lg border border-brand-gold/10 bg-brand-beige/20">
-          <Image
-            src={profile.imageUrl}
-            alt={profile.imageAlt}
-            fill
-            unoptimized
-            className="object-cover object-center"
-            sizes="154px"
-          />
-        </div>
-        <div className="space-y-1">
-          <h4 className="text-[9px] font-medium uppercase tracking-[0.35em] text-brand-gold">{profile.role}</h4>
-          <h3 className="font-serif text-2xl font-light leading-none">{profile.name}</h3>
-        </div>
-      </motion.div>
+    <div className="space-y-4">
+      <h4 className="text-center text-sm font-medium uppercase tracking-[0.4em] text-brand-gold">
+        {profile.role}
+      </h4>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.3, duration: 1 }}
-        className="min-w-0 flex-1 pt-1"
-      >
-        <ProfileFacts facts={profile.facts} align={isImageRight ? "right" : "left"} />
-      </motion.div>
+      <div className={cn("flex items-start gap-5", isImageRight && "flex-row-reverse")}>
+        <motion.div
+          initial={{ opacity: 0, x: isImageRight ? 24 : -24 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.2 }}
+          className="w-[43%] shrink-0 space-y-3 text-center"
+        >
+          <div className="relative aspect-[3/4] overflow-hidden rounded-lg border border-brand-gold/10 bg-brand-beige/20">
+            <Image
+              src={profile.imageUrl}
+              alt={profile.imageAlt}
+              fill
+              unoptimized
+              className="object-cover object-center"
+              sizes="154px"
+            />
+          </div>
+          <h3 className="font-serif text-2xl font-light leading-none">{profile.name}</h3>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3, duration: 1 }}
+          className="min-w-0 flex-1 pt-1"
+        >
+          <ProfileFacts facts={profile.facts} align={isImageRight ? "right" : "left"} />
+        </motion.div>
+      </div>
     </div>
   );
 }
