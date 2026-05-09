@@ -10,8 +10,8 @@ type CoupleProfile = (typeof weddingContent.couple)[keyof typeof weddingContent.
 export function CoupleProfileSection() {
   return (
     <section className="space-y-20 bg-white px-8 py-24">
-      <ProfileCard profile={weddingContent.couple.groom} imageSide="left" />
-      <ProfileCard profile={weddingContent.couple.bride} imageSide="right" />
+      <ProfileCard profile={weddingContent.couple.bride} imageSide="left" />
+      <ProfileCard profile={weddingContent.couple.groom} imageSide="right" />
     </section>
   );
 }
@@ -20,22 +20,28 @@ function ProfileCard({ profile, imageSide }: { profile: CoupleProfile; imageSide
   const isImageRight = imageSide === "right";
 
   return (
-    <div className={cn("flex flex-col items-center gap-10 md:flex-row", isImageRight && "md:flex-row-reverse")}>
+    <div className={cn("flex items-start gap-5", isImageRight && "flex-row-reverse")}>
       <motion.div
-        initial={{ opacity: 0, x: isImageRight ? 30 : -30 }}
+        initial={{ opacity: 0, x: isImageRight ? 24 : -24 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 1.2 }}
-        className="relative aspect-[3/4] w-full overflow-hidden rounded-sm md:w-1/2"
+        className="w-[43%] shrink-0 space-y-3 text-center"
       >
-        <Image
-          src={profile.imageUrl}
-          alt={profile.imageAlt}
-          fill
-          unoptimized
-          className="object-cover grayscale-[0.3]"
-          sizes="(min-width: 768px) 210px, 356px"
-        />
+        <div className="relative aspect-[3/4] overflow-hidden rounded-lg border border-brand-gold/10 bg-brand-beige/20">
+          <Image
+            src={profile.imageUrl}
+            alt={profile.imageAlt}
+            fill
+            unoptimized
+            className="object-cover object-center"
+            sizes="154px"
+          />
+        </div>
+        <div className="space-y-1">
+          <h4 className="text-[9px] font-medium uppercase tracking-[0.35em] text-brand-gold">{profile.role}</h4>
+          <h3 className="font-serif text-2xl font-light leading-none">{profile.name}</h3>
+        </div>
       </motion.div>
 
       <motion.div
@@ -43,39 +49,27 @@ function ProfileCard({ profile, imageSide }: { profile: CoupleProfile; imageSide
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: 0.3, duration: 1 }}
-        className={cn("w-full space-y-6 md:w-1/2", isImageRight ? "text-right" : "text-left")}
+        className="min-w-0 flex-1 pt-1"
       >
-        <div className="space-y-1">
-          <h4 className="text-[10px] font-medium uppercase tracking-[0.4em] text-brand-gold">{profile.role}</h4>
-          <h3 className="font-serif text-2xl font-light">{profile.name}</h3>
-        </div>
-
-        <ProfileFacts
-          align={isImageRight ? "right" : "left"}
-          facts={[profile.birthDate, profile.hometown, profile.occupation]}
-        />
-
-        <div className="border-t border-brand-gold/10 pt-4">
-          <p className="text-xs tracking-widest text-brand-muted">{profile.parents}</p>
-        </div>
+        <ProfileFacts facts={profile.facts} align={isImageRight ? "right" : "left"} />
       </motion.div>
     </div>
   );
 }
 
-function ProfileFacts({ facts, align }: { facts: string[]; align: "left" | "right" }) {
+function ProfileFacts({ facts, align }: { facts: CoupleProfile["facts"]; align: "left" | "right" }) {
   return (
-    <div
-      className={cn(
-        "flex flex-col space-y-4 text-sm font-light leading-relaxed text-brand-muted",
-        align === "right" && "items-end",
-      )}
-    >
+    <div className={cn("flex flex-col gap-2.5 font-[Inter,ui-sans-serif,system-ui,sans-serif]", align === "right" && "items-end")}>
       {facts.map((fact) => (
-        <div key={fact} className="flex items-center gap-3">
-          {align === "left" ? <span className="h-1 w-1 rounded-full bg-brand-gold" /> : null}
-          <p>{fact}</p>
-          {align === "right" ? <span className="h-1 w-1 rounded-full bg-brand-gold" /> : null}
+        <div
+          key={fact.label}
+          className={cn(
+            "w-full rounded-2xl bg-brand-beige/70 px-3 py-2 shadow-sm shadow-brand-gold/5",
+            align === "right" ? "text-right" : "text-left",
+          )}
+        >
+          <span className="mb-0.5 block text-[9px] font-black tracking-[0.18em] text-brand-gold">{fact.label}</span>
+          <p className="text-[12px] font-semibold leading-5 text-brand-ink/75">{fact.value}</p>
         </div>
       ))}
     </div>

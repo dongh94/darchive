@@ -12,18 +12,19 @@ export function InvitationMessageSection() {
         transition={{ duration: 1.2, ease: "easeOut" }}
         className="space-y-6"
       >
-        <div className="space-y-2 font-serif text-sm italic text-brand-muted md:text-base">
-          <p>You can not be happy every day.</p>
-          <p>But there are happy things every day.</p>
+        <div className="space-y-2 font-serif text-[15px] italic leading-relaxed text-brand-ink/80 md:text-base">
+          <p>I just try to live every day</p>
+          <p>as if I&apos;ve deliberately come back to this one day.</p>
         </div>
 
-        <div className="space-y-1 text-sm leading-relaxed text-brand-ink md:text-base">
-          <p>매일 행복할 순 없지만,</p>
-          <p>행복한 것들은 매일 있어.</p>
+        <div className="space-y-1 text-[15px] leading-relaxed text-brand-ink md:text-base">
+          <p>나는 매일을 살아가려 해요.</p>
+          <p>마치 이 하루를 다시 살기 위해</p>
+          <p>돌아온 것처럼.</p>
         </div>
 
-        <p className="text-[11px] uppercase tracking-widest text-brand-gold opacity-70">
-          &lt;월트 디즈니&gt;, 곰돌이 푸 中
+        <p className="text-[11px] font-medium uppercase tracking-widest text-brand-gold">
+          &lt;어바웃 타임&gt;, Tim Lake 대사 中
         </p>
       </motion.div>
 
@@ -40,20 +41,29 @@ export function InvitationMessageSection() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: 0.8, duration: 1.2 }}
-        className="space-y-8 text-[13px] font-light leading-loose text-brand-ink md:text-sm"
+        className="space-y-8 text-sm leading-8 text-brand-ink md:text-[15px]"
       >
-        <h3 className="mb-4 font-serif text-lg text-brand-gold">저희 결혼합니다</h3>
+        <h3 className="mb-4 font-serif text-xl text-brand-gold">저희 결혼합니다</h3>
 
         <p>
-          저희의 결혼 소식이<br />
-          부담스럽지 않게 다가가길 바라며,<br />
-          편한 마음으로 오셔서<br />
-          축하해주시면 감사하겠습니다.
+          다시 돌아오고 싶은 하루들 속에<br />
+          늘 서로가 있었습니다.
         </p>
 
         <p>
-          혹여 참석이 어려우시더라도 부담 갖지 마시고,<br />
-          마음으로 축하해주시면 감사하겠습니다.
+          함께 웃던 시간,<br />
+          서로에게 기대던 계절들이 모여<br />
+          이제 하나의 약속이 되었습니다.
+        </p>
+
+        <p>
+          저희가 함께 맞이할 첫날에<br />
+          소중한 분들을 모시고 싶습니다.
+        </p>
+
+        <p>
+          오셔서 따뜻한 마음으로<br />
+          저희의 시작을 축복해 주세요.
         </p>
       </motion.div>
     </section>
