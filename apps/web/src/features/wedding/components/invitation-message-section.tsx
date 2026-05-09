@@ -31,7 +31,7 @@ export function InvitationMessageSection() {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ delay: 0.5, duration: 1.5 }}
+        transition={{ delay: 0.25, duration: 0.9 }}
         className="mx-auto h-px w-12 bg-brand-gold/20"
       />
 
@@ -39,7 +39,7 @@ export function InvitationMessageSection() {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ delay: 0.8, duration: 1.2 }}
+        transition={{ delay: 0.32, duration: 0.85, ease: "easeOut" }}
         className="space-y-8 text-sm leading-8 text-brand-ink md:text-[15px]"
       >
         <h3 className="font-serif text-xl leading-none text-brand-ink">

@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
 import { X } from "lucide-react";
 import confetti from "canvas-confetti";
+import { BackgroundMusicControl } from "./components/background-music-control";
 import { CalendarSection } from "./components/calendar-section";
 import { ClosingSection } from "./components/closing-section";
 import { CoupleProfileSection } from "./components/couple-profile-section";
@@ -58,6 +59,7 @@ export function WeddingInvitation() {
           style={{ scaleX }}
         />
 
+        <BackgroundMusicControl />
         <FloatingHearts />
         <HeroSection />
         <InvitationMessageSection />

@@ -11,7 +11,16 @@ export function LocationSection() {
 
   return (
     <section id="location" className="px-6 py-20">
-      <SectionHeader eyebrow="Location" title={location.venue} description={`${location.address} · ${location.phone}`} />
+      <SectionHeader
+        eyebrow="Location"
+        title={location.venue}
+        description={
+          <>
+            <span className="block">{location.address}</span>
+            <span className="mt-1 block">{location.phone}</span>
+          </>
+        }
+      />
 
       <div className="relative mx-auto mb-12 aspect-square max-w-[280px] overflow-hidden rounded-full border border-brand-gold/10 bg-brand-beige">
         <Image
