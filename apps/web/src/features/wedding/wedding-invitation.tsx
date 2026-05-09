@@ -53,7 +53,7 @@ export function WeddingInvitation() {
 
   return (
     <div className="wedding-page flex min-h-screen justify-center bg-neutral-50 selection:bg-brand-gold/20">
-      <div className="relative flex w-full max-w-[420px] flex-col overflow-hidden bg-white shadow-2xl">
+      <div className="relative flex min-w-[360px] max-w-[420px] flex-col overflow-hidden bg-white shadow-2xl">
         <motion.div
           className="fixed inset-x-0 top-0 z-[60] mx-auto h-1 max-w-[420px] origin-left bg-brand-gold"
           style={{ scaleX }}

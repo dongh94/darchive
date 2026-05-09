@@ -180,7 +180,7 @@ function PolaroidCaption({
       transition={{ delay: isIntroVisible ? 0 : 0.12, duration: 0.65, ease: "easeOut" }}
       className="pt-4 text-center text-brand-ink"
     >
-      <p className="font-wedding-batang text-[38px] font-normal leading-none tracking-normal">
+      <p className="font-wedding-batang whitespace-nowrap text-[clamp(30px,8.7vw,38px)] font-normal leading-none tracking-normal">
         Donghee &amp; Jiyeon
       </p>
       <p className="mt-3 font-[Inter,ui-sans-serif,system-ui,sans-serif] text-[11px] font-semibold tracking-[0.28em] text-brand-ink">
@@ -231,7 +231,7 @@ function DrawnWeddingTitle({ isIntroVisible }: { isIntroVisible: boolean }) {
   return (
     <div className="relative z-[100] flex h-full w-full items-center justify-center overflow-visible" aria-label="Our Wedding Day">
       <motion.span
-        className="relative z-[100] inline-block whitespace-nowrap px-2 pb-4 pt-2 font-['Homemade_Apple',cursive] text-[23px] leading-none text-brand-gold"
+        className="font-rottersand relative z-[100] inline-block whitespace-nowrap px-2 pb-4 pt-2 text-[clamp(21px,6.3vw,25px)] leading-none text-brand-gold"
         initial={{ clipPath: "inset(0 100% 0 0)", opacity: 1 }}
         animate={{ clipPath: "inset(0 0% 0 0)", opacity: 1 }}
         transition={{ delay: isIntroVisible ? 0.55 : 0, duration: 1.55, ease: [0.45, 0, 0.15, 1] }}

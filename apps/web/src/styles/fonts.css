@@ -1,8 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Gowun+Batang:wght@400;700&family=Homemade+Apple&family=Inter:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Gowun+Batang:wght@400;700&family=Inter:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap');
 
 @font-face {
   font-family: "Batang";
   src: url("/fonts/batang.ttf");
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Rottersand";
+  src: url("/fonts/rottersand.otf") format("opentype");
   font-display: swap;
   font-weight: 400;
   font-style: normal;
@@ -14,4 +22,8 @@
 
 .wedding-page .font-wedding-batang {
   font-family: "Batang", serif !important;
+}
+
+.font-rottersand {
+  font-family: "Rottersand", cursive;
 }
