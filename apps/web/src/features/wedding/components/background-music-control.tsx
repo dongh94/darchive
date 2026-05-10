@@ -76,6 +76,29 @@ export function BackgroundMusicControl() {
     };
   }, [isEnabled, isPlaying, playMusic]);
 
+  useEffect(() => {
+    const stopMusic = () => {
+      audioRef.current?.pause();
+      setIsPlaying(false);
+    };
+
+    const stopMusicWhenHidden = () => {
+      if (document.visibilityState === "hidden") {
+        stopMusic();
+      }
+    };
+
+    window.addEventListener("pagehide", stopMusic);
+    window.addEventListener("beforeunload", stopMusic);
+    document.addEventListener("visibilitychange", stopMusicWhenHidden);
+
+    return () => {
+      window.removeEventListener("pagehide", stopMusic);
+      window.removeEventListener("beforeunload", stopMusic);
+      document.removeEventListener("visibilitychange", stopMusicWhenHidden);
+    };
+  }, []);
+
   const handleToggle = useCallback(() => {
     if (isPlaying) {
       setIsEnabled(false);

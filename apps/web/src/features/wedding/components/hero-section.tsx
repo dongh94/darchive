@@ -102,7 +102,7 @@ function PolaroidCard({
   venue: string;
 }) {
   return (
-    <div className="relative w-full max-w-[365px] rounded-[10px] bg-[#fffdf8] px-5 pb-6 pt-3 shadow-[0_4px_10px_rgba(44,44,44,0.16),0_24px_58px_rgba(44,44,44,0.28)] ring-1 ring-black/5">
+    <div className="relative w-full max-w-[365px] rounded-[10px] bg-white px-5 pb-6 pt-3 shadow-[0_4px_10px_rgba(44,44,44,0.16),0_24px_58px_rgba(44,44,44,0.28)] ring-1 ring-black/5">
       <div className="relative z-[90] flex h-12 items-center justify-center">
         <DrawnWeddingTitle isIntroVisible={isIntroVisible} />
       </div>

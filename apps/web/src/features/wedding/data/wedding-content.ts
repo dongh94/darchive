@@ -48,8 +48,20 @@ export const weddingContent = {
     alt: `웨딩 갤러리 사진 ${item}`,
   })),
   giftAccounts: [
-    { side: "Groom's Side", name: "김동희", bank: "신한은행", account: "110-123-456789" },
-    { side: "Bride's Side", name: "변지연", bank: "카카오뱅크", account: "3333-01-1234567" },
+    {
+      side: "Groom's Side",
+      name: "김동희",
+      bank: "카카오뱅크",
+      account: "3333034454127",
+      kakaoPayUrl: "https://qr.kakaopay.com/FQSPFiqac",
+    },
+    {
+      side: "Bride's Side",
+      name: "변지연",
+      bank: "카카오뱅크",
+      account: "3333012012534",
+      kakaoPayUrl: "https://qr.kakaopay.com/Ej9HFmeid",
+    },
   ],
   share: {
     title: "김동희 & 변지연 결혼식",
