@@ -2,24 +2,28 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { LocateFixed } from "lucide-react";
 import { weddingContent } from "../data/wedding-content";
 import { SectionHeader } from "./section-header";
 
-const kakaoMapAppKey = process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY ?? "38b7d58c9b26ed2600590e9ea712530c";
+const kakaoMapAppKey = process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY ?? "79c2e2547531e3ae08f59b315239fda6";
 const kakaoMapScriptId = "kakao-map-sdk";
 const naverMapUrl = "https://brr.kr/hhqc59";
 const kakaoMapUrl = "https://brr.kr/i665g1";
 const weddingVenuePosition = { lat: 37.4818021, lng: 126.7984948 };
+const weddingVenueMapLevel = 4;
 let kakaoMapScriptPromise: Promise<void> | null = null;
 
 type KakaoLatLng = unknown;
+type KakaoMapInstance = {
+  setCenter: (latLng: KakaoLatLng) => void;
+  setLevel: (level: number) => void;
+};
 
 type KakaoMaps = {
   LatLng: new (lat: number, lng: number) => KakaoLatLng;
-  Map: new (container: HTMLElement, options: { center: KakaoLatLng; level: number }) => {
-    setCenter: (latLng: KakaoLatLng) => void;
-  };
-  Marker: new (options: { map: unknown; position: KakaoLatLng }) => unknown;
+  Map: new (container: HTMLElement, options: { center: KakaoLatLng; level: number }) => KakaoMapInstance;
+  Marker: new (options: { map: KakaoMapInstance; position: KakaoLatLng }) => unknown;
   load: (callback: () => void) => void;
 };
 
@@ -88,7 +92,18 @@ export function LocationSection() {
 
 function KakaoMap({ title }: { title: string }) {
   const mapRef = useRef<HTMLDivElement | null>(null);
+  const kakaoMapRef = useRef<KakaoMapInstance | null>(null);
   const [hasMapError, setHasMapError] = useState(false);
+
+  const resetMapPosition = () => {
+    if (!kakaoMapRef.current || !window.kakao) {
+      return;
+    }
+
+    const venueLatLng = new window.kakao.maps.LatLng(weddingVenuePosition.lat, weddingVenuePosition.lng);
+    kakaoMapRef.current.setCenter(venueLatLng);
+    kakaoMapRef.current.setLevel(weddingVenueMapLevel);
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -103,9 +118,10 @@ function KakaoMap({ title }: { title: string }) {
         const venueLatLng = new maps.LatLng(weddingVenuePosition.lat, weddingVenuePosition.lng);
         const map = new maps.Map(mapRef.current, {
           center: venueLatLng,
-          level: 3,
+          level: weddingVenueMapLevel,
         });
 
+        kakaoMapRef.current = map;
         new maps.Marker({ map, position: venueLatLng });
       })
       .catch(() => {
@@ -116,12 +132,23 @@ function KakaoMap({ title }: { title: string }) {
 
     return () => {
       isMounted = false;
+      kakaoMapRef.current = null;
     };
   }, []);
 
   return (
     <div className="relative mx-auto mb-12 aspect-[4/3] w-full max-w-[320px] overflow-hidden rounded-lg border border-brand-gold/10 bg-brand-beige/30 shadow-sm">
       <div ref={mapRef} className="h-full w-full" aria-label={`${title} 카카오맵`} />
+      {!hasMapError ? (
+        <button
+          type="button"
+          onClick={resetMapPosition}
+          className="absolute left-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-brand-ink shadow-sm ring-1 ring-brand-gold/15 backdrop-blur transition hover:bg-white"
+          aria-label="예식장 위치로 지도 되돌리기"
+        >
+          <LocateFixed size={16} strokeWidth={1.8} />
+        </button>
+      ) : null}
       {hasMapError ? (
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center text-xs leading-5 text-brand-muted">
           지도를 불러오지 못했습니다.
