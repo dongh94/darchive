@@ -4,10 +4,16 @@
   "version": "0.1.0",
   "packageManager": "pnpm@10.15.0",
   "scripts": {
-    "build": "pnpm --filter @darchive/web build",
-    "dev": "pnpm --filter @darchive/web dev",
+    "build": "pnpm db:generate && pnpm --filter @darchive/web build",
+    "db:generate": "prisma generate",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:migrate:dev": "prisma migrate dev",
+    "dev": "pnpm db:generate && pnpm --filter @darchive/web dev",
     "lint": "pnpm --filter @darchive/web lint",
     "start": "pnpm --filter @darchive/web start",
-    "typecheck": "pnpm --filter @darchive/web typecheck"
+    "typecheck": "pnpm db:generate && pnpm --filter @darchive/web typecheck"
+  },
+  "devDependencies": {
+    "prisma": "^7.8.0"
   }
 }

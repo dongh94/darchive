@@ -1,0 +1,67 @@
+---
+description: Prisma 7 schema, client access, and query conventions
+alwaysApply: true
+---
+
+# Prisma 7
+
+Project uses Prisma 7 with the new **`prisma-client`** generator (TypeScript output, ESM-first). All DB code lives in `packages/db`.
+
+## Generator (Schema)
+
+```prisma
+generator client {
+  provider               = "prisma-client"   // NOT "prisma-client-js"
+  output                 = "../src/generated/prisma"  // REQUIRED
+  runtime                = "nodejs"
+  moduleFormat           = "esm"
+  generatedFileExtension = "ts"
+  importFileExtension    = "ts"
+}
+```
+
+- `output` is **required** in v7; generated client is no longer placed in `node_modules`.
+- Import `PrismaClient` from the generated output path, not from `@prisma/client`.
+
+## Client Access
+
+- Only `packages/db` may instantiate `PrismaClient`. Other code uses the exported `getPrisma()`.
+- Never import Prisma from `apps/web` React components. Route handlers and `packages/api` only.
+- Use the global-cache singleton pattern (already in place in `packages/db/src/index.ts`).
+
+```ts
+// ✅ GOOD
+import { getPrisma } from "@darchive/db";
+const prisma = getPrisma();
+```
+
+## Query Style
+
+- **Always use `select`** to fetch only needed columns. Avoid `include` unless full relations are intentional.
+- Use `findUnique`/`findFirst` over `findMany` when expecting one row.
+- Wrap multi-write flows in `prisma.$transaction([...])` when atomicity matters.
+- Convert `Date` → ISO string at the boundary (route handler / tRPC procedure), not in components.
+
+```ts
+// ✅ GOOD
+const entries = await prisma.weddingGuestbookEntry.findMany({
+  where: { isVisible: true },
+  orderBy: { createdAt: "desc" },
+  take: 30,
+  select: { id: true, name: true, message: true, createdAt: true },
+});
+```
+
+## Migrations & Scripts
+
+- Schema and migrations live in `packages/db/prisma/`.
+- Generate: `pnpm db:generate` (runs `prisma generate`).
+- Dev migration: `pnpm db:migrate:dev`.
+- Production deploy: `pnpm db:migrate:deploy`.
+- Run `pnpm db:generate` after schema changes before typechecking.
+
+## Environment
+
+- Read DB URL from `DATABASE_URL` (or Vercel-provided `DATABASE_POSTGRES_*`).
+- Never commit `.env`, credentials, or connection strings.
+- Use `@prisma/adapter-pg` (already configured) for Postgres pooling-friendly access.

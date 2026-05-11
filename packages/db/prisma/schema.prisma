@@ -1,0 +1,41 @@
+generator client {
+  provider               = "prisma-client"
+  output                 = "../src/generated/prisma"
+  runtime                = "nodejs"
+  moduleFormat           = "esm"
+  generatedFileExtension = "ts"
+  importFileExtension    = "ts"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum WeddingAttendance {
+  YES
+  NO
+}
+
+model WeddingGuestbookEntry {
+  id        String   @id @default(cuid())
+  name      String   @unique @db.VarChar(40)
+  message   String   @db.VarChar(500)
+  isVisible Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isVisible, createdAt])
+}
+
+model WeddingRsvp {
+  id         String            @id @default(cuid())
+  name       String            @db.VarChar(40)
+  attendance WeddingAttendance
+  guestCount Int
+  phone      String?           @db.VarChar(30)
+  message    String?           @db.VarChar(500)
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  @@index([attendance, createdAt])
+}
