@@ -21,16 +21,23 @@ function getInitialTheme(): Theme {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
+function applyTheme(theme: Theme) {
+  const root = window.document.documentElement;
+
+  root.classList.remove("light", "dark");
+  root.classList.add(theme);
+  window.localStorage.setItem("theme", theme);
+}
+
 export function HomeNavbar() {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
-    const root = window.document.documentElement;
+    const initialTheme = getInitialTheme();
 
-    root.classList.remove("light", "dark");
-    root.classList.add(theme);
-    window.localStorage.setItem("theme", theme);
-  }, [theme]);
+    setTheme(initialTheme);
+    applyTheme(initialTheme);
+  }, []);
 
   return (
     <nav className="home-glass fixed inset-x-0 top-0 z-50 flex h-16 items-center justify-between px-5 md:px-12">
@@ -62,7 +69,14 @@ export function HomeNavbar() {
         </button>
         <button
           type="button"
-          onClick={() => setTheme((currentTheme) => (currentTheme === "light" ? "dark" : "light"))}
+          onClick={() =>
+            setTheme((currentTheme) => {
+              const nextTheme = currentTheme === "light" ? "dark" : "light";
+
+              applyTheme(nextTheme);
+              return nextTheme;
+            })
+          }
           className="inline-flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-muted"
           aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
         >

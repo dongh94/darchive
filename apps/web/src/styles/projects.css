@@ -1,8 +1,8 @@
 .projects-page {
   background:
-    linear-gradient(rgba(18, 23, 31, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(18, 23, 31, 0.045) 1px, transparent 1px),
-    #f6f2ea;
+    linear-gradient(rgba(52, 168, 83, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(52, 168, 83, 0.08) 1px, transparent 1px),
+    #f4fbf6;
   background-size: 36px 36px;
   font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
   letter-spacing: 0;
@@ -10,7 +10,7 @@
 }
 
 .projects-page::selection {
-  background: rgba(199, 244, 100, 0.7);
+  background: rgba(52, 168, 83, 0.28);
 }
 
 .projects-section-band {
@@ -35,6 +35,52 @@
   word-break: keep-all;
   overflow-wrap: normal;
   text-wrap: balance;
+}
+
+.dark .projects-page {
+  background:
+    linear-gradient(rgba(52, 168, 83, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(52, 168, 83, 0.1) 1px, transparent 1px),
+    #08140d !important;
+  color: #f8fafc !important;
+}
+
+.dark .projects-page [class*="bg-white"],
+.dark .projects-page [class*="bg-[#f4fbf6]"],
+.dark .projects-page [class*="bg-[#eaf7ee]"] {
+  background-color: #0d1f14 !important;
+  color: #f8fafc !important;
+}
+
+.dark .projects-page [class*="text-[#12171f]"],
+.dark .projects-page [class*="text-[#122016]"],
+.dark .projects-page [class*="text-[#66717f]"] {
+  color: #d8eadc !important;
+}
+
+.dark .projects-page [class*="text-[#0f6f3d]"] {
+  color: #86efac !important;
+}
+
+.dark .projects-page [class*="border-black/10"],
+.dark .projects-page [class*="border-[#34a853]"] {
+  border-color: rgb(52 168 83 / 0.28) !important;
+}
+
+.dark .projects-page [class*="bg-black/10"],
+.dark .projects-page [class*="bg-[#34a853]/10"],
+.dark .projects-page [class*="bg-[#34a853]/20"] {
+  background-color: rgb(52 168 83 / 0.14) !important;
+}
+
+.dark .projects-page [class*="bg-white/70"],
+.dark .projects-page [class*="bg-white/85"] {
+  background-color: rgb(8 20 13 / 0.86) !important;
+  color: #f8fafc !important;
+}
+
+.dark .projects-page [class*="shadow"] {
+  box-shadow: 0 24px 70px rgb(0 0 0 / 0.32) !important;
 }
 
 .projects-skip-link {

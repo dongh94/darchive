@@ -23,6 +23,50 @@
   box-sizing: border-box;
 }
 
+.dark .experience-page {
+  background: #171407 !important;
+  color: #fffdf3 !important;
+}
+
+.dark .experience-page section {
+  border-color: rgb(251 188 5 / 0.26) !important;
+}
+
+.dark .experience-page [class*="bg-white"],
+.dark .experience-page [class*="bg-[#fffdf3]"],
+.dark .experience-page [class*="bg-[#fff9df]"],
+.dark .experience-page [class*="bg-[#fff5cc]"],
+.dark .experience-page [class*="bg-[#fff0b3]"] {
+  background-color: #1f1a08 !important;
+  color: #fffdf3 !important;
+}
+
+.dark .experience-page [class*="border-[#eadba8]"] {
+  border-color: rgb(251 188 5 / 0.28) !important;
+}
+
+.dark .experience-page [class*="text-[#1f1b10]"],
+.dark .experience-page [class*="text-[#4b3f1d]"],
+.dark .experience-page [class*="text-[#62512a]"],
+.dark .experience-page [class*="text-[#7a682f]"],
+.dark .experience-page [class*="text-[#9b8756]"] {
+  color: #f5e6b8 !important;
+}
+
+.dark .experience-page [class*="text-[#b58100]"] {
+  color: #fbbc05 !important;
+}
+
+.dark .experience-page h1,
+.dark .experience-page h2,
+.dark .experience-page h3 {
+  color: #fffdf3;
+}
+
+.dark .experience-page [class*="shadow"] {
+  box-shadow: 0 18px 45px rgb(0 0 0 / 0.28) !important;
+}
+
 @media (max-width: 640px) {
   .experience-page {
     width: 100vw;
