@@ -12,7 +12,7 @@ export function NavigationCard({ item }: NavigationCardProps) {
   return (
     <CardLink
       href={item.href}
-      accent={item.accent}
+      accent={Boolean(item.accent)}
     >
       <div className="space-y-3">
         <div className={`inline-flex rounded-md p-2.5 ${item.accent ? "bg-accent/10 text-accent" : "bg-muted text-foreground/70"}`}>
