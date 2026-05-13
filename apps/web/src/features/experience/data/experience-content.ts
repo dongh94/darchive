@@ -8,6 +8,16 @@ export type ExperienceProject = {
   achievements: string[];
 };
 
+export type ExperienceEducation = {
+  number: string;
+  title: string;
+  organization: string;
+  period: string;
+  role: string;
+  technologies: string[];
+  achievements: string[];
+};
+
 export const experienceContent = {
   company: "오케스트로",
   role: "프론트엔드 개발자",
@@ -110,6 +120,51 @@ export const experienceProjects: ExperienceProject[] = [
     ],
   },
 ];
+
+export const educationExperiences: ExperienceEducation[] = [
+  {
+    number: "01",
+    title: "핀테크 인턴십 코스",
+    organization: "코스콤",
+    period: "2023.06 ~ 2023.08",
+    role: "프론트엔드 개발 (팀 리더)",
+    technologies: ["Next.js", "Firebase"],
+    achievements: [
+      "팀 리더로서 프로젝트 일정 및 품질을 관리했습니다.",
+      "커플 공동 가계부 플랫폼으로 해커톤 우수상을 수상했습니다.",
+      "반응형 웹 디자인과 주요 화면 설계를 담당했습니다.",
+      "가계부 등록 및 계산 로직을 구현했습니다.",
+    ],
+  },
+  {
+    number: "02",
+    title: "SSAFY 교육 프로젝트",
+    organization: "삼성",
+    period: "2022.01 ~ 2022.12",
+    role: "프론트엔드 & 백엔드 개발",
+    technologies: ["Vue.js", "React.js", "Spring Boot", "MariaDB", "Python", "Django"],
+    achievements: [
+      "독서 모임 플랫폼을 개발하고 Matter.js를 활용한 게이미피케이션 UI를 구현했습니다.",
+      "로그인, 회원가입 및 인증·인가 로직을 구현했습니다.",
+      "Solidity와 MetaMask를 연동한 블록체인 기반 공동구매 플랫폼을 개발했습니다.",
+      "언리얼 엔진 기반 좀비 게임을 개발하고 자율 프로젝트 우수상을 수상했습니다.",
+    ],
+  },
+  {
+    number: "03",
+    title: "빅데이터 분석가 양성 과정",
+    organization: "세종산학협력관",
+    period: "2021.04 ~ 2021.10",
+    role: "프론트엔드 개발 & 데이터 분석",
+    technologies: ["React.js", "Python", "Pandas", "Matplotlib"],
+    achievements: [
+      "유기동물 입양 플랫폼을 개발하고 분석안을 발표해 우수상을 수상했습니다.",
+      "직영 유기동물센터를 방문해 요구사항을 수집했습니다.",
+      "Python-Selenium을 활용해 데이터를 크롤링하고 Pandas 기반으로 데이터를 가공했습니다.",
+      "중소기업 연계 프로젝트를 수행했습니다.",
+    ],
+  },
+] as const;
 
 export const coreCompetencies = [
   "Vue3 Composition API와 TypeScript 기반의 대규모 프론트엔드 애플리케이션 개발 경험",

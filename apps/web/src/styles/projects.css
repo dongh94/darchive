@@ -30,6 +30,13 @@
   text-transform: uppercase;
 }
 
+.projects-balanced-title {
+  max-width: min(100%, 1280px);
+  word-break: keep-all;
+  overflow-wrap: normal;
+  text-wrap: balance;
+}
+
 .projects-skip-link {
   position: absolute;
   top: 12px;

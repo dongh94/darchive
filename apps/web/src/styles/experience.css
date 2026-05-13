@@ -6,6 +6,7 @@
     system-ui,
     sans-serif;
   letter-spacing: 0;
+  overflow-x: hidden;
 }
 
 .experience-page h1,
@@ -14,4 +15,43 @@
 .experience-page h4,
 .experience-page p {
   font-family: inherit;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.experience-page * {
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .experience-page {
+    width: 100vw;
+  }
+
+  .experience-page section,
+  .experience-page article,
+  .experience-page article > div {
+    max-width: 100vw;
+  }
+
+  .experience-page section > div {
+    width: 100%;
+    max-width: calc(100vw - 2.5rem);
+  }
+
+  .experience-page p,
+  .experience-page li,
+  .experience-page h2,
+  .experience-page h3,
+  .experience-page h4 {
+    width: 100%;
+    max-width: calc(100vw - 2.5rem);
+  }
+
+  .experience-page article p,
+  .experience-page article li,
+  .experience-page article h3,
+  .experience-page article h4 {
+    max-width: calc(100vw - 5.5rem);
+  }
 }

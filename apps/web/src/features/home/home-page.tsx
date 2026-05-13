@@ -229,7 +229,7 @@ function HomeFooter() {
   const { footer } = homeContent;
 
   return (
-    <footer id="about" className="border-t border-border px-5 py-12 md:px-12">
+    <footer className="border-t border-border px-5 py-12 md:px-12">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 md:flex-row">
         <div className="flex items-center gap-3">
           <div className="flex scale-75 gap-0.5" aria-hidden="true">

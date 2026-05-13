@@ -42,7 +42,6 @@ export const projectsHero = {
     description: "화면의 상태, API 흐름, 사용자의 다음 행동을 함께 고려하며 구현하는 프론트엔드 개발자입니다.",
     links: [
       { label: "dongh94@naver.com", href: "mailto:dongh94@naver.com" },
-      { label: "010-4539-2713", href: "tel:010-4539-2713" },
       { label: "GitHub", href: "https://github.com/dongh94", external: true },
     ] satisfies ContactLink[],
     location: "서울시 영등포구",

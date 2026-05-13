@@ -45,7 +45,7 @@ function HeroSection() {
           D-Archive
         </Link>
         <p className="projects-eyebrow text-[#c7f464]">{projectsHero.eyebrow}</p>
-        <h1 className="mb-6 max-w-6xl text-5xl font-black leading-none tracking-normal md:text-7xl lg:text-8xl">
+        <h1 className="projects-balanced-title mb-6 max-w-7xl text-5xl font-black leading-tight tracking-normal md:text-7xl xl:text-8xl">
           {projectsHero.title}
         </h1>
         <p className="max-w-4xl text-lg leading-relaxed text-white/70 md:text-xl">{projectsHero.description}</p>
@@ -282,9 +282,9 @@ function SectionHeading({
   isDark?: boolean;
 }) {
   return (
-    <div className="mb-12 max-w-5xl">
+    <div className="mb-12 max-w-7xl">
       <p className={cn("projects-eyebrow", isDark ? "text-[#c7f464]" : "text-[#ff6b57]")}>{eyebrow}</p>
-      <h2 className="mb-4 text-4xl font-black leading-tight md:text-6xl">{title}</h2>
+      <h2 className="projects-balanced-title mb-4 text-4xl font-black leading-tight md:text-5xl">{title}</h2>
       {description ? <p className={cn("m-0 max-w-4xl text-lg leading-relaxed", isDark ? "text-white/70" : "text-[#66717f]")}>{description}</p> : null}
     </div>
   );

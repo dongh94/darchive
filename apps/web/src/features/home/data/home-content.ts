@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { BookOpen, Briefcase, Code2, Globe, Heart } from "lucide-react";
+import { Briefcase, Code2, Globe, Heart } from "lucide-react";
 
 export type HomeNavigationItem = {
   title: string;
@@ -53,16 +53,6 @@ export const archiveNavigation: HomeNavigationItem[] = [
     image: "/images/wedding/hero-couple.jpeg",
   },
   {
-    title: "DevLogs",
-    description: "개발 과정에서 배운 것과 경험한 것들은 추후 정리해 공개할 예정입니다.",
-    href: "#archive",
-    icon: Code2,
-    accent: "blue",
-    size: "standard",
-    tags: ["Coming", "Soon"],
-    status: "추후 진행 예정",
-  },
-  {
     title: "Projects",
     description: "상상하고 실험하며 만든 결과물들.",
     href: "/projects",
@@ -81,13 +71,14 @@ export const archiveNavigation: HomeNavigationItem[] = [
     tags: ["Career"],
   },
   {
-    title: "About",
-    description: "나에 대한 이야기와 철학을 담았습니다.",
-    href: "#about",
-    icon: BookOpen,
+    title: "DevLogs",
+    description: "개발 과정에서 배운 것과 경험한 것들은 추후 정리해 공개할 예정입니다.",
+    href: "#archive",
+    icon: Code2,
     accent: "blue",
-    size: "wide",
-    tags: ["Philosophy", "Story"],
+    size: "standard",
+    tags: ["Coming", "Soon"],
+    status: "추후 진행 예정",
   },
 ];
 
@@ -98,8 +89,8 @@ export const heroActions = [
     variant: "primary",
   },
   {
-    title: "About Me",
-    href: "#about",
+    title: "Projects",
+    href: "/projects",
     variant: "secondary",
   },
 ] as const;
@@ -109,7 +100,7 @@ export const latestUpdates: HomeUpdate[] = [
     category: "Wedding",
     title: "Our Story",
     description: "두 사람이 만나 하나의 이야기를 만들어가기까지",
-    date: "2026.04.15",
+    date: "2026.09.12",
     href: "/wedding",
   },
   {
@@ -123,10 +114,9 @@ export const latestUpdates: HomeUpdate[] = [
 
 export const homeNavItems = [
   { title: "Wedding", href: "/wedding" },
-  { title: "DevLogs", href: "#archive" },
   { title: "Projects", href: "/projects" },
   { title: "Experience", href: "/experience" },
-  { title: "About", href: "#about" },
+  { title: "DevLogs", href: "#archive" },
 ] as const;
 
 export const footerLinks = [
