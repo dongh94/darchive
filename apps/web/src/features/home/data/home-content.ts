@@ -1,12 +1,16 @@
 import type { LucideIcon } from "lucide-react";
-import { BookOpen, Clock, Code2, Folder, Heart } from "lucide-react";
+import { BookOpen, Briefcase, Code2, Globe, Heart } from "lucide-react";
 
 export type HomeNavigationItem = {
   title: string;
   description: string;
   href: string;
   icon: LucideIcon;
-  accent?: boolean;
+  accent: "blue" | "red" | "yellow" | "green";
+  size: "featured" | "wide" | "standard" | "tall";
+  tags: string[];
+  image?: string;
+  status?: string;
 };
 
 export type HomeUpdate = {
@@ -19,59 +23,86 @@ export type HomeUpdate = {
 
 export const homeContent = {
   hero: {
-    eyebrow: "Personal Platform",
-    title: "Donghee Archive",
-    headline: "삶과 개발, 그리고 중요한 순간들을 기록하는 개인 플랫폼",
-    description: "이곳은 단순한 포트폴리오가 아니라, 배운 것과 만든 것, 그리고 소중한 순간들을 함께 쌓아가는 개인 아카이브입니다.",
+    eyebrow: "Between Tech and Life, a space for my records.",
+    title: "Tech & Life",
+    highlightedTitle: "나를 기록하는 공간.",
+    description:
+      "개발하며 배운 것들, 살아가며 남기고 싶은 순간들.\n이곳은 단순한 포트폴리오를 넘어, 나의 경험과 생각이 쌓여가는 개인 아카이브입니다.",
   },
-  intro: {
-    eyebrow: "About This Platform",
-    body: "이 사이트는 삶의 중요한 순간과 개발자로서의 기록을 함께 담기 위해 만든 개인 플랫폼입니다. Wedding, DevLogs, Timeline, Projects처럼 서로 다른 이야기들이 하나의 흐름 안에서 자연스럽게 이어지도록 구성하고 있습니다.",
+  archive: {
+    eyebrow: "D-Archive",
+    title: "The Continuous Record",
+    action: "Explore All Fragments",
   },
-  quote: "기록은 지나간 시간을 남기는 일이기도 하지만, 앞으로의 나를 만들어가는 일이기도 하다고 생각합니다.",
   footer: {
-    brand: "Donghee Archive",
-    description: "A personal platform for recording life, development, and meaningful moments.",
+    brand: "D-Archive",
+    copyright: "© 2026 D-Archive. All rights recorded.",
+    status: "Status: Living.",
   },
 } as const;
 
-export const heroActions: HomeNavigationItem[] = [
+export const archiveNavigation: HomeNavigationItem[] = [
   {
     title: "Wedding",
-    description: "우리의 결혼 이야기와 소중한 순간들",
+    description: "우리의 결혼 이야기와 소중한 순간들을 기록합니다.",
     href: "/wedding",
     icon: Heart,
-    accent: true,
+    accent: "red",
+    size: "featured",
+    tags: ["Life", "Moment"],
+    image: "/images/wedding/hero-couple.jpeg",
   },
   {
     title: "DevLogs",
-    description: "개발 과정에서 배운 것과 경험한 것들",
-    href: "#",
+    description: "개발 과정에서 배운 것과 경험한 것들은 추후 정리해 공개할 예정입니다.",
+    href: "#archive",
     icon: Code2,
-  },
-  {
-    title: "About",
-    description: "나에 대한 이야기와 생각들",
-    href: "#",
-    icon: BookOpen,
-  },
-];
-
-export const archiveNavigation: HomeNavigationItem[] = [
-  ...heroActions,
-  {
-    title: "Timeline",
-    description: "시간 순으로 기록된 삶의 흐름",
-    href: "#",
-    icon: Clock,
+    accent: "blue",
+    size: "standard",
+    tags: ["Coming", "Soon"],
+    status: "추후 진행 예정",
   },
   {
     title: "Projects",
-    description: "만들고 실험한 프로젝트들",
-    href: "#",
-    icon: Folder,
+    description: "상상하고 실험하며 만든 결과물들.",
+    href: "/projects",
+    icon: Globe,
+    accent: "green",
+    size: "tall",
+    tags: ["Build", "Lab"],
+  },
+  {
+    title: "Experience",
+    description: "경험의 흐름에 따라 쌓인 일과 배움의 기록.",
+    href: "/experience",
+    icon: Briefcase,
+    accent: "yellow",
+    size: "standard",
+    tags: ["Career"],
+  },
+  {
+    title: "About",
+    description: "나에 대한 이야기와 철학을 담았습니다.",
+    href: "#about",
+    icon: BookOpen,
+    accent: "blue",
+    size: "wide",
+    tags: ["Philosophy", "Story"],
   },
 ];
+
+export const heroActions = [
+  {
+    title: "Explore Archive",
+    href: "#archive",
+    variant: "primary",
+  },
+  {
+    title: "About Me",
+    href: "#about",
+    variant: "secondary",
+  },
+] as const;
 
 export const latestUpdates: HomeUpdate[] = [
   {
@@ -83,9 +114,24 @@ export const latestUpdates: HomeUpdate[] = [
   },
   {
     category: "DevLogs",
-    title: "Building a Personal Archive",
-    description: "개인 아카이브 플랫폼을 설계하며 배운 것들",
-    date: "2026.04.10",
-    href: "#",
+    title: "DevLogs Coming Soon",
+    description: "개발 기록은 아카이브 구조를 정리한 뒤 순차적으로 추가할 예정입니다.",
+    date: "Coming soon",
+    href: "#archive",
   },
 ];
+
+export const homeNavItems = [
+  { title: "Wedding", href: "/wedding" },
+  { title: "DevLogs", href: "#archive" },
+  { title: "Projects", href: "/projects" },
+  { title: "Experience", href: "/experience" },
+  { title: "About", href: "#about" },
+] as const;
+
+export const footerLinks = [
+  { title: "Twitter", href: "#" },
+  { title: "GitHub", href: "#" },
+  { title: "LinkedIn", href: "#" },
+  { title: "Medium", href: "#" },
+] as const;

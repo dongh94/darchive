@@ -1,0 +1,17 @@
+.experience-page {
+  font-family:
+    "Inter",
+    "Apple SD Gothic Neo",
+    "Malgun Gothic",
+    system-ui,
+    sans-serif;
+  letter-spacing: 0;
+}
+
+.experience-page h1,
+.experience-page h2,
+.experience-page h3,
+.experience-page h4,
+.experience-page p {
+  font-family: inherit;
+}
