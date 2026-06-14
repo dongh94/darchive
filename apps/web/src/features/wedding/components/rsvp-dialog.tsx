@@ -15,10 +15,6 @@ type RsvpDialogProps = {
   onSubmitted: () => void;
 };
 
-const RSVP_FIELD_ORDER = ["name", "attendance", "guestCount", "phone", "message"] as const satisfies ReadonlyArray<
-  keyof RsvpInput
->;
-
 export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
   useBodyScrollLock();
 
@@ -48,14 +44,12 @@ export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
   });
 
   const errors = form.formState.errors;
-  const firstFieldError = RSVP_FIELD_ORDER.map((field) => errors[field]?.message).find((message) =>
-    Boolean(message),
-  );
   const formMessage =
-    firstFieldError ??
     submitRsvp.error?.message ??
     (submitRsvp.isSuccess ? "참석 의사가 전달되었습니다." : null);
   const isNameInvalid = Boolean(errors.name);
+  const isPhoneInvalid = Boolean(errors.phone);
+  const isMessageInvalid = Boolean(errors.message);
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center overscroll-none px-5 py-4">
@@ -91,12 +85,13 @@ export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
 
           <form onSubmit={onSubmit} className="space-y-3.5">
             <label className="block space-y-1">
-              <span className="ml-1 text-[10px] uppercase tracking-widest text-brand-gold">Name</span>
+              <span className="ml-1 text-[10px] tracking-widest text-brand-gold">성함</span>
               <input
                 type="text"
                 {...form.register("name")}
-                maxLength={40}
+                maxLength={16}
                 aria-invalid={isNameInvalid}
+                aria-describedby={errors.name ? "rsvp-name-error" : undefined}
                 className={cn(
                   "w-full rounded-md border bg-brand-beige/30 px-3.5 py-2.5 text-sm focus:outline-none",
                   isNameInvalid
@@ -106,10 +101,11 @@ export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
                 placeholder="성함을 입력해주세요"
                 autoComplete="name"
               />
+              <FieldError id="rsvp-name-error" message={errors.name?.message} />
             </label>
 
             <div className="space-y-1">
-              <p className="ml-1 text-[10px] uppercase tracking-widest text-brand-gold">Attendance</p>
+              <p className="ml-1 text-[10px] tracking-widest text-brand-gold">참석 여부</p>
               <Controller
                 control={form.control}
                 name="attendance"
@@ -131,7 +127,7 @@ export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
             </div>
 
             <label className="block space-y-1">
-              <span className="ml-1 text-[10px] uppercase tracking-widest text-brand-gold">Number of Guests</span>
+              <span className="ml-1 text-[10px] tracking-widest text-brand-gold">참석 인원</span>
               <select
                 {...form.register("guestCount", { valueAsNumber: true })}
                 className="w-full appearance-none rounded-md border border-brand-gold/20 bg-white px-3.5 py-2.5 text-sm focus:border-brand-gold focus:outline-none"
@@ -144,26 +140,43 @@ export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
             </label>
 
             <label className="block space-y-1">
-              <span className="ml-1 text-[10px] uppercase tracking-widest text-brand-gold">Phone</span>
+              <span className="ml-1 text-[10px] tracking-widest text-brand-gold">연락처</span>
               <input
                 type="tel"
                 {...form.register("phone")}
-                maxLength={30}
-                className="w-full rounded-md border border-brand-gold/20 bg-brand-beige/30 px-3.5 py-2.5 text-sm focus:border-brand-gold focus:outline-none"
+                maxLength={20}
+                inputMode="tel"
+                aria-invalid={isPhoneInvalid}
+                aria-describedby={errors.phone ? "rsvp-phone-error" : undefined}
+                className={cn(
+                  "w-full rounded-md border bg-brand-beige/30 px-3.5 py-2.5 text-sm focus:outline-none",
+                  isPhoneInvalid
+                    ? "border-brand-ink/60 focus:border-brand-ink"
+                    : "border-brand-gold/20 focus:border-brand-gold",
+                )}
                 placeholder="연락처 선택 입력"
                 autoComplete="tel"
               />
+              <FieldError id="rsvp-phone-error" message={errors.phone?.message} />
             </label>
 
             <label className="block space-y-1">
-              <span className="ml-1 text-[10px] uppercase tracking-widest text-brand-gold">Message</span>
+              <span className="ml-1 text-[10px] tracking-widest text-brand-gold">전하고 싶은 말</span>
               <textarea
                 {...form.register("message")}
-                maxLength={500}
+                maxLength={200}
                 rows={3}
-                className="w-full resize-none rounded-md border border-brand-gold/20 bg-brand-beige/30 px-3.5 py-2.5 text-sm leading-6 focus:border-brand-gold focus:outline-none"
+                aria-invalid={isMessageInvalid}
+                aria-describedby={errors.message ? "rsvp-message-error" : undefined}
+                className={cn(
+                  "w-full resize-none rounded-md border bg-brand-beige/30 px-3.5 py-2.5 text-sm leading-6 focus:outline-none",
+                  isMessageInvalid
+                    ? "border-brand-ink/60 focus:border-brand-ink"
+                    : "border-brand-gold/20 focus:border-brand-gold",
+                )}
                 placeholder="전하고 싶은 말 선택 입력"
               />
+              <FieldError id="rsvp-message-error" message={errors.message?.message} />
             </label>
 
             <input
@@ -185,11 +198,8 @@ export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
             </button>
             {formMessage ? (
               <p
-                role={firstFieldError ? "alert" : undefined}
-                className={cn(
-                  "text-center text-xs leading-5",
-                  firstFieldError ? "text-brand-ink" : "text-brand-muted",
-                )}
+                role={submitRsvp.error ? "alert" : undefined}
+                className="text-center text-xs leading-5 text-brand-muted"
               >
                 {formMessage}
               </p>
@@ -199,6 +209,14 @@ export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
       </motion.div>
     </div>
   );
+}
+
+function FieldError({ id, message }: { id: string; message?: string }) {
+  return message ? (
+    <p id={id} role="alert" className="ml-1 text-xs text-brand-ink/75">
+      {message}
+    </p>
+  ) : null;
 }
 
 function AttendanceButton({

@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
-import confetti from "canvas-confetti";
 import { BackgroundMusicControl } from "./components/background-music-control";
 import { CalendarSection } from "./components/calendar-section";
 import { ClosingSection } from "./components/closing-section";
@@ -24,8 +23,10 @@ import { shareWeddingInvitation } from "./utils/share";
 
 export function WeddingInvitation() {
   const [isRsvpOpen, setIsRsvpOpen] = useState(false);
+  const [isRsvpSuccessVisible, setIsRsvpSuccessVisible] = useState(false);
   const [isGuestbookViewerOpen, setIsGuestbookViewerOpen] = useState(false);
   const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
+  const rsvpSuccessTimerRef = useRef<number | null>(null);
   const [dDay] = useState(getWeddingDDay);
   const { scrollYProgress } = useScroll();
   const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1]);
@@ -48,18 +49,31 @@ export function WeddingInvitation() {
   );
 
   const handleRsvpSubmit = useCallback(() => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ["#C5A059", "#F5F2ED", "#2C2C2C"],
-    });
-    window.setTimeout(() => setIsRsvpOpen(false), 1500);
+    setIsRsvpOpen(false);
+    setIsRsvpSuccessVisible(true);
+
+    if (rsvpSuccessTimerRef.current !== null) {
+      window.clearTimeout(rsvpSuccessTimerRef.current);
+    }
+
+    rsvpSuccessTimerRef.current = window.setTimeout(() => {
+      setIsRsvpSuccessVisible(false);
+      rsvpSuccessTimerRef.current = null;
+    }, 1800);
   }, []);
 
   const handleShare = useCallback(() => {
     void shareWeddingInvitation(copyToClipboard);
   }, [copyToClipboard]);
+
+  useEffect(
+    () => () => {
+      if (rsvpSuccessTimerRef.current !== null) {
+        window.clearTimeout(rsvpSuccessTimerRef.current);
+      }
+    },
+    [],
+  );
 
   return (
     <WeddingQueryProvider>
@@ -90,7 +104,7 @@ export function WeddingInvitation() {
         <ClosingSection addToCalendar={downloadWeddingCalendar} onRsvp={openRsvp} onShare={handleShare} />
 
         <footer className="border-t border-brand-gold/5 bg-brand-beige/20 py-12 text-center">
-          <p className="text-[10px] uppercase tracking-[0.4em] text-brand-gold opacity-60">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.4em] text-brand-ink">
             Crafted with love by Donghee Kim
           </p>
         </footer>
@@ -99,6 +113,18 @@ export function WeddingInvitation() {
         <AnimatePresence>
           {isRsvpOpen ? <RsvpDialog onClose={closeRsvp} onSubmitted={handleRsvpSubmit} /> : null}
           {isGuestbookViewerOpen ? <GuestbookViewerDialog onClose={closeGuestbookViewer} /> : null}
+          {isRsvpSuccessVisible ? (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.16, ease: "easeOut" }}
+              className="fixed bottom-6 left-1/2 z-[120] -translate-x-1/2 whitespace-nowrap rounded-full bg-brand-ink px-5 py-3 text-sm text-white shadow-lg"
+              role="status"
+            >
+              참석 의사가 전달되었습니다.
+            </motion.div>
+          ) : null}
         </AnimatePresence>
       </div>
     </WeddingQueryProvider>
