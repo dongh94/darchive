@@ -3,247 +3,426 @@
 export const weddingGallery = [
   {
     "id": "wedding-gallery-01",
-    "src": "/images/wedding/gallery/full/gallery-01.webp",
+    "src": "/images/wedding/gallery/full/gallery-01-9abd2faa52.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-01-9abd2faa52.webp",
     "alt": "웨딩 갤러리 사진 1",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-02",
-    "src": "/images/wedding/gallery/full/gallery-02.webp",
+    "src": "/images/wedding/gallery/full/gallery-02-b088d39ffe.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-02-b088d39ffe.webp",
     "alt": "웨딩 갤러리 사진 2",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-03",
-    "src": "/images/wedding/gallery/full/gallery-03.webp",
+    "src": "/images/wedding/gallery/full/gallery-03-4a20a8f7c6.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-03-4a20a8f7c6.webp",
     "alt": "웨딩 갤러리 사진 3",
-    "width": 900,
-    "height": 1200
+    "width": 2048,
+    "height": 1536
   },
   {
     "id": "wedding-gallery-04",
-    "src": "/images/wedding/gallery/full/gallery-04.webp",
+    "src": "/images/wedding/gallery/full/gallery-04-227bd11217.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-04-227bd11217.webp",
     "alt": "웨딩 갤러리 사진 4",
-    "width": 900,
-    "height": 1200
+    "width": 2048,
+    "height": 1536
   },
   {
     "id": "wedding-gallery-05",
-    "src": "/images/wedding/gallery/full/gallery-05.webp",
+    "src": "/images/wedding/gallery/full/gallery-05-f724188a00.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-05-f724188a00.webp",
     "alt": "웨딩 갤러리 사진 5",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-06",
-    "src": "/images/wedding/gallery/full/gallery-06.webp",
+    "src": "/images/wedding/gallery/full/gallery-06-dd42d5826b.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-06-dd42d5826b.webp",
     "alt": "웨딩 갤러리 사진 6",
-    "width": 1200,
-    "height": 900
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-07",
-    "src": "/images/wedding/gallery/full/gallery-07.webp",
+    "src": "/images/wedding/gallery/full/gallery-07-49c1ca0854.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-07-49c1ca0854.webp",
     "alt": "웨딩 갤러리 사진 7",
-    "width": 1200,
-    "height": 900
+    "width": 1638,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-08",
-    "src": "/images/wedding/gallery/full/gallery-08.webp",
+    "src": "/images/wedding/gallery/full/gallery-08-2fd46134d4.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-08-2fd46134d4.webp",
     "alt": "웨딩 갤러리 사진 8",
-    "width": 1200,
-    "height": 900
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-09",
-    "src": "/images/wedding/gallery/full/gallery-09.webp",
+    "src": "/images/wedding/gallery/full/gallery-09-fba901a4ff.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-09-fba901a4ff.webp",
     "alt": "웨딩 갤러리 사진 9",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-10",
-    "src": "/images/wedding/gallery/full/gallery-10.webp",
+    "src": "/images/wedding/gallery/full/gallery-10-16c52a1a42.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-10-16c52a1a42.webp",
     "alt": "웨딩 갤러리 사진 10",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-11",
-    "src": "/images/wedding/gallery/full/gallery-11.webp",
+    "src": "/images/wedding/gallery/full/gallery-11-b0233001d0.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-11-b0233001d0.webp",
     "alt": "웨딩 갤러리 사진 11",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-12",
-    "src": "/images/wedding/gallery/full/gallery-12.webp",
+    "src": "/images/wedding/gallery/full/gallery-12-4709d6c099.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-12-4709d6c099.webp",
     "alt": "웨딩 갤러리 사진 12",
-    "width": 900,
-    "height": 1200
+    "width": 2048,
+    "height": 1536
   },
   {
     "id": "wedding-gallery-13",
-    "src": "/images/wedding/gallery/full/gallery-13.webp",
+    "src": "/images/wedding/gallery/full/gallery-13-e7993d2f3d.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-13-e7993d2f3d.webp",
     "alt": "웨딩 갤러리 사진 13",
-    "width": 900,
-    "height": 1200
+    "width": 2048,
+    "height": 1536
   },
   {
     "id": "wedding-gallery-14",
-    "src": "/images/wedding/gallery/full/gallery-14.webp",
+    "src": "/images/wedding/gallery/full/gallery-14-e068681775.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-14-e068681775.webp",
     "alt": "웨딩 갤러리 사진 14",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-15",
-    "src": "/images/wedding/gallery/full/gallery-15.webp",
+    "src": "/images/wedding/gallery/full/gallery-15-821c36d280.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-15-821c36d280.webp",
     "alt": "웨딩 갤러리 사진 15",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-16",
-    "src": "/images/wedding/gallery/full/gallery-16.webp",
+    "src": "/images/wedding/gallery/full/gallery-16-e5e53ca5b6.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-16-e5e53ca5b6.webp",
     "alt": "웨딩 갤러리 사진 16",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-17",
-    "src": "/images/wedding/gallery/full/gallery-17.webp",
+    "src": "/images/wedding/gallery/full/gallery-17-6e83ecce55.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-17-6e83ecce55.webp",
     "alt": "웨딩 갤러리 사진 17",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-18",
-    "src": "/images/wedding/gallery/full/gallery-18.webp",
+    "src": "/images/wedding/gallery/full/gallery-18-e7a4dc6ab5.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-18-e7a4dc6ab5.webp",
     "alt": "웨딩 갤러리 사진 18",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-19",
-    "src": "/images/wedding/gallery/full/gallery-19.webp",
+    "src": "/images/wedding/gallery/full/gallery-19-d93ba284c5.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-19-d93ba284c5.webp",
     "alt": "웨딩 갤러리 사진 19",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-20",
-    "src": "/images/wedding/gallery/full/gallery-20.webp",
+    "src": "/images/wedding/gallery/full/gallery-20-8f92696828.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-20-8f92696828.webp",
     "alt": "웨딩 갤러리 사진 20",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-21",
-    "src": "/images/wedding/gallery/full/gallery-21.webp",
+    "src": "/images/wedding/gallery/full/gallery-21-488b4662c5.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-21-488b4662c5.webp",
     "alt": "웨딩 갤러리 사진 21",
-    "width": 1200,
-    "height": 800
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-22",
-    "src": "/images/wedding/gallery/full/gallery-22.webp",
+    "src": "/images/wedding/gallery/full/gallery-22-a21d32870c.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-22-a21d32870c.webp",
     "alt": "웨딩 갤러리 사진 22",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-23",
-    "src": "/images/wedding/gallery/full/gallery-23.webp",
+    "src": "/images/wedding/gallery/full/gallery-23-461e530175.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-23-461e530175.webp",
     "alt": "웨딩 갤러리 사진 23",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-24",
-    "src": "/images/wedding/gallery/full/gallery-24.webp",
+    "src": "/images/wedding/gallery/full/gallery-24-696fd5dd4a.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-24-696fd5dd4a.webp",
     "alt": "웨딩 갤러리 사진 24",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-25",
-    "src": "/images/wedding/gallery/full/gallery-25.webp",
+    "src": "/images/wedding/gallery/full/gallery-25-61078617d3.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-25-61078617d3.webp",
     "alt": "웨딩 갤러리 사진 25",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-26",
-    "src": "/images/wedding/gallery/full/gallery-26.webp",
+    "src": "/images/wedding/gallery/full/gallery-26-f707b48155.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-26-f707b48155.webp",
     "alt": "웨딩 갤러리 사진 26",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-27",
-    "src": "/images/wedding/gallery/full/gallery-27.webp",
+    "src": "/images/wedding/gallery/full/gallery-27-db2d64c49e.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-27-db2d64c49e.webp",
     "alt": "웨딩 갤러리 사진 27",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-28",
-    "src": "/images/wedding/gallery/full/gallery-28.webp",
+    "src": "/images/wedding/gallery/full/gallery-28-55f4771781.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-28-55f4771781.webp",
     "alt": "웨딩 갤러리 사진 28",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-29",
-    "src": "/images/wedding/gallery/full/gallery-29.webp",
+    "src": "/images/wedding/gallery/full/gallery-29-805e05c0d8.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-29-805e05c0d8.webp",
     "alt": "웨딩 갤러리 사진 29",
-    "width": 877,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-30",
-    "src": "/images/wedding/gallery/full/gallery-30.webp",
+    "src": "/images/wedding/gallery/full/gallery-30-6fc79595f4.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-30-6fc79595f4.webp",
     "alt": "웨딩 갤러리 사진 30",
-    "width": 900,
-    "height": 1200
+    "width": 1536,
+    "height": 2048
   },
   {
     "id": "wedding-gallery-31",
-    "src": "/images/wedding/gallery/full/gallery-31.webp",
+    "src": "/images/wedding/gallery/full/gallery-31-dabf174b90.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-31-dabf174b90.webp",
     "alt": "웨딩 갤러리 사진 31",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-32",
+    "src": "/images/wedding/gallery/full/gallery-32-f6b6f883a9.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-32-f6b6f883a9.webp",
+    "alt": "웨딩 갤러리 사진 32",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-33",
+    "src": "/images/wedding/gallery/full/gallery-33-f9bcaaadf4.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-33-f9bcaaadf4.webp",
+    "alt": "웨딩 갤러리 사진 33",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-34",
+    "src": "/images/wedding/gallery/full/gallery-34-be3c88050f.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-34-be3c88050f.webp",
+    "alt": "웨딩 갤러리 사진 34",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-35",
+    "src": "/images/wedding/gallery/full/gallery-35-80b00774d0.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-35-80b00774d0.webp",
+    "alt": "웨딩 갤러리 사진 35",
+    "width": 2048,
+    "height": 1365
+  },
+  {
+    "id": "wedding-gallery-36",
+    "src": "/images/wedding/gallery/full/gallery-36-0c67308717.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-36-0c67308717.webp",
+    "alt": "웨딩 갤러리 사진 36",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-37",
+    "src": "/images/wedding/gallery/full/gallery-37-c92e76fc2e.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-37-c92e76fc2e.webp",
+    "alt": "웨딩 갤러리 사진 37",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-38",
+    "src": "/images/wedding/gallery/full/gallery-38-d6084f535b.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-38-d6084f535b.webp",
+    "alt": "웨딩 갤러리 사진 38",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-39",
+    "src": "/images/wedding/gallery/full/gallery-39-a044cfc385.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-39-a044cfc385.webp",
+    "alt": "웨딩 갤러리 사진 39",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-40",
+    "src": "/images/wedding/gallery/full/gallery-40-f0515c4246.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-40-f0515c4246.webp",
+    "alt": "웨딩 갤러리 사진 40",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-41",
+    "src": "/images/wedding/gallery/full/gallery-41-dc30ac112e.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-41-dc30ac112e.webp",
+    "alt": "웨딩 갤러리 사진 41",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-42",
+    "src": "/images/wedding/gallery/full/gallery-42-1fa2bacc84.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-42-1fa2bacc84.webp",
+    "alt": "웨딩 갤러리 사진 42",
+    "width": 2048,
+    "height": 1536
+  },
+  {
+    "id": "wedding-gallery-43",
+    "src": "/images/wedding/gallery/full/gallery-43-89c8ff05d5.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-43-89c8ff05d5.webp",
+    "alt": "웨딩 갤러리 사진 43",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-44",
+    "src": "/images/wedding/gallery/full/gallery-44-c8a3cf85ad.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-44-c8a3cf85ad.webp",
+    "alt": "웨딩 갤러리 사진 44",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-45",
+    "src": "/images/wedding/gallery/full/gallery-45-97ca723822.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-45-97ca723822.webp",
+    "alt": "웨딩 갤러리 사진 45",
+    "width": 2048,
+    "height": 1536
+  },
+  {
+    "id": "wedding-gallery-46",
+    "src": "/images/wedding/gallery/full/gallery-46-a419563339.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-46-a419563339.webp",
+    "alt": "웨딩 갤러리 사진 46",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-47",
+    "src": "/images/wedding/gallery/full/gallery-47-f9c823b5c6.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-47-f9c823b5c6.webp",
+    "alt": "웨딩 갤러리 사진 47",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-48",
+    "src": "/images/wedding/gallery/full/gallery-48-b61d3e7d95.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-48-b61d3e7d95.webp",
+    "alt": "웨딩 갤러리 사진 48",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-49",
+    "src": "/images/wedding/gallery/full/gallery-49-7c3ef93a08.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-49-7c3ef93a08.webp",
+    "alt": "웨딩 갤러리 사진 49",
+    "width": 1497,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-50",
+    "src": "/images/wedding/gallery/full/gallery-50-0c3448eb8e.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-50-0c3448eb8e.webp",
+    "alt": "웨딩 갤러리 사진 50",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-51",
+    "src": "/images/wedding/gallery/full/gallery-51-d36b0beedf.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-51-d36b0beedf.webp",
+    "alt": "웨딩 갤러리 사진 51",
+    "width": 1536,
+    "height": 2048
+  },
+  {
+    "id": "wedding-gallery-52",
+    "src": "/images/wedding/gallery/full/gallery-52-ca298fab15.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-52-ca298fab15.webp",
+    "alt": "웨딩 갤러리 사진 52",
     "width": 870,
     "height": 653
   },
   {
-    "id": "wedding-gallery-32",
-    "src": "/images/wedding/gallery/full/gallery-32.webp",
-    "alt": "웨딩 갤러리 사진 32",
-    "width": 900,
-    "height": 1200
-  },
-  {
-    "id": "wedding-gallery-33",
-    "src": "/images/wedding/gallery/full/gallery-33.webp",
-    "alt": "웨딩 갤러리 사진 33",
-    "width": 900,
-    "height": 1200
-  },
-  {
-    "id": "wedding-gallery-34",
-    "src": "/images/wedding/gallery/full/gallery-34.webp",
-    "alt": "웨딩 갤러리 사진 34",
-    "width": 900,
-    "height": 1200
-  },
-  {
-    "id": "wedding-gallery-35",
-    "src": "/images/wedding/gallery/full/gallery-35.webp",
-    "alt": "웨딩 갤러리 사진 35",
-    "width": 900,
-    "height": 1200
+    "id": "wedding-gallery-53",
+    "src": "/images/wedding/gallery/full/gallery-53-a516eb958a.webp",
+    "thumbnailSrc": "/images/wedding/gallery/thumbnails/gallery-53-a516eb958a.webp",
+    "alt": "웨딩 갤러리 사진 53",
+    "width": 1536,
+    "height": 2048
   }
 ] as const;
