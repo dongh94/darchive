@@ -8,6 +8,10 @@
     "dev": "pnpm --filter @darchive/web dev",
     "lint": "pnpm --filter @darchive/web lint",
     "start": "pnpm --filter @darchive/web start",
-    "typecheck": "pnpm --filter @darchive/web typecheck"
+    "typecheck": "pnpm --filter @darchive/web typecheck",
+    "wedding:images": "node scripts/process-wedding-images.mjs"
+  },
+  "devDependencies": {
+    "sharp": "0.34.5"
   }
 }
