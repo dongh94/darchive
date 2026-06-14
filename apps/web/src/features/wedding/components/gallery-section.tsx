@@ -12,7 +12,8 @@ import { useBodyScrollLock } from "../lib/use-body-scroll-lock";
 import { SectionHeader } from "./section-header";
 
 const INITIAL_IMAGE_COUNT = 9;
-const SLIDE_TRANSITION_DURATION = 180;
+const MIN_SLIDE_TRANSITION_DURATION = 180;
+const MAX_SLIDE_TRANSITION_DURATION = 320;
 const galleryImagePromises = new Map<string, Promise<void>>();
 const decodedGalleryImages = new Set<string>();
 
@@ -98,6 +99,9 @@ function GalleryLightbox({
   const [selectedIndex, setSelectedIndex] = useState(initialIndex);
   const [dragOffset, setDragOffset] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [transitionDuration, setTransitionDuration] = useState(
+    MAX_SLIDE_TRANSITION_DURATION,
+  );
   const viewportRef = useRef<HTMLDivElement>(null);
   const pointerStartXRef = useRef(0);
   const pointerStartTimeRef = useRef(0);
@@ -117,7 +121,7 @@ function GalleryLightbox({
   }, []);
 
   const completeTransition = useCallback(
-    (nextIndex: number | null) => {
+    (nextIndex: number | null, duration: number) => {
       clearTransitionTimeout();
       transitionTimeoutRef.current = window.setTimeout(() => {
         setIsAnimating(false);
@@ -129,7 +133,7 @@ function GalleryLightbox({
         dragOffsetRef.current = 0;
         setDragOffset(0);
         transitionTimeoutRef.current = null;
-      }, SLIDE_TRANSITION_DURATION);
+      }, duration);
     },
     [clearTransitionTimeout],
   );
@@ -143,11 +147,20 @@ function GalleryLightbox({
       const directionOffset = direction === "next" ? 1 : -1;
       const nextIndex = getWrappedIndex(selectedIndex + directionOffset, imageCount);
       const viewportWidth = viewportRef.current?.clientWidth ?? 410;
+      const targetOffset = direction === "next" ? -viewportWidth : viewportWidth;
+      const remainingDistance = Math.abs(
+        targetOffset - dragOffsetRef.current,
+      );
+      const duration = getSlideTransitionDuration(
+        remainingDistance,
+        viewportWidth,
+      );
 
       warmGalleryImages(nextIndex);
+      setTransitionDuration(duration);
       setIsAnimating(true);
-      setDragOffset(direction === "next" ? -viewportWidth : viewportWidth);
-      completeTransition(nextIndex);
+      setDragOffset(targetOffset);
+      completeTransition(nextIndex, duration);
     },
     [completeTransition, imageCount, isAnimating, selectedIndex],
   );
@@ -274,9 +287,14 @@ function GalleryLightbox({
     }
 
     setIsAnimating(true);
+    const snapBackDuration = getSlideTransitionDuration(
+      Math.abs(finalDragOffset),
+      viewportWidth,
+    );
+    setTransitionDuration(snapBackDuration);
     dragOffsetRef.current = 0;
     setDragOffset(0);
-    completeTransition(null);
+    completeTransition(null, snapBackDuration);
   };
 
   const slides = [-1, 0, 1].map((offset) => {
@@ -361,7 +379,7 @@ function GalleryLightbox({
               style={{
                 transform: `translate3d(calc(-100% + ${dragOffset}px), 0, 0)`,
                 transition: isAnimating
-                  ? `transform ${SLIDE_TRANSITION_DURATION}ms cubic-bezier(0.22, 1, 0.36, 1)`
+                  ? `transform ${transitionDuration}ms cubic-bezier(0.25, 0.8, 0.25, 1)`
                   : "none",
               }}
             >
@@ -468,6 +486,16 @@ function getLightboxImageClassName(
 
 function getWrappedIndex(index: number, imageCount: number) {
   return (index + imageCount) % imageCount;
+}
+
+function getSlideTransitionDuration(distance: number, viewportWidth: number) {
+  const distanceRatio = Math.min(Math.max(distance / viewportWidth, 0), 1);
+
+  return Math.round(
+    MIN_SLIDE_TRANSITION_DURATION +
+      (MAX_SLIDE_TRANSITION_DURATION - MIN_SLIDE_TRANSITION_DURATION) *
+        distanceRatio,
+  );
 }
 
 function warmGalleryImages(selectedIndex: number) {

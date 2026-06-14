@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { keepPreviousData } from "@tanstack/react-query";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { Loader2, Search, X } from "lucide-react";
 import { trpc } from "@/shared/lib/trpc";
 import { useDebouncedValue } from "@/shared/lib/use-debounced-value";
@@ -41,6 +41,7 @@ export function GuestbookViewerDialog({ onClose }: GuestbookViewerDialogProps) {
   const listQuery = trpc.wedding.guestbookList.useInfiniteQuery(listInput, {
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
     placeholderData: keepPreviousData,
+    staleTime: 60_000,
   });
 
   const deleteMutation = trpc.wedding.guestbookDelete.useMutation({
@@ -79,14 +80,16 @@ export function GuestbookViewerDialog({ onClose }: GuestbookViewerDialogProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        transition={{ duration: 0.16, ease: "easeOut" }}
         onClick={onClose}
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/45"
         aria-label="방명록 보기 배경 닫기"
       />
       <motion.div
-        initial={{ opacity: 0, scale: 0.96, y: 12 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.96, y: 12 }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 8 }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
         className="relative flex h-[78dvh] min-h-[480px] max-h-[calc(100dvh-2rem)] w-full max-w-[420px] flex-col overflow-hidden rounded-xl bg-white shadow-2xl"
       >
         <header className="flex items-center justify-between border-b border-brand-gold/10 px-5 py-4">
@@ -156,43 +159,34 @@ export function GuestbookViewerDialog({ onClose }: GuestbookViewerDialogProps) {
             </p>
           ) : (
             <div className="space-y-3">
-              <AnimatePresence initial={false}>
-                {entries.map((entry) => {
-                  const isTargeted = deleteTarget?.id === entry.id;
-                  return (
-                    <motion.div
-                      key={entry.id}
-                      layout
-                      initial={{ opacity: 0, y: -8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.18 } }}
-                      transition={{ type: "spring", stiffness: 320, damping: 28 }}
-                    >
-                      <GuestbookEntryCard
-                        entry={entry}
-                        onRequestDelete={() => handleRequestDelete(entry.id, entry.name)}
-                        isDeleteHighlighted={isTargeted}
-                        footerSlot={
-                          isTargeted ? (
-                            <DeleteConfirmation
-                              target={deleteTarget}
-                              onCancel={() => setDeleteTarget(null)}
-                              onChangeInput={(value) =>
-                                setDeleteTarget((current) =>
-                                  current && current.id === entry.id ? { ...current, input: value } : current,
-                                )
-                              }
-                              onConfirm={handleConfirmDelete}
-                              isSubmitting={deleteMutation.isPending}
-                              errorMessage={deleteMutation.error?.message ?? null}
-                            />
-                          ) : null
-                        }
-                      />
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
+              {entries.map((entry) => {
+                const isTargeted = deleteTarget?.id === entry.id;
+                return (
+                  <div key={entry.id}>
+                    <GuestbookEntryCard
+                      entry={entry}
+                      onRequestDelete={() => handleRequestDelete(entry.id, entry.name)}
+                      isDeleteHighlighted={isTargeted}
+                      footerSlot={
+                        isTargeted ? (
+                          <DeleteConfirmation
+                            target={deleteTarget}
+                            onCancel={() => setDeleteTarget(null)}
+                            onChangeInput={(value) =>
+                              setDeleteTarget((current) =>
+                                current && current.id === entry.id ? { ...current, input: value } : current,
+                              )
+                            }
+                            onConfirm={handleConfirmDelete}
+                            isSubmitting={deleteMutation.isPending}
+                            errorMessage={deleteMutation.error?.message ?? null}
+                          />
+                        ) : null
+                      }
+                    />
+                  </div>
+                );
+              })}
               {listQuery.hasNextPage ? (
                 <button
                   type="button"

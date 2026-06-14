@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "motion/react";
@@ -20,9 +21,12 @@ type GuestbookSectionProps = {
 
 const PREVIEW_LIMIT = 3;
 const PREVIEW_INPUT = { limit: PREVIEW_LIMIT } as const;
+const VIEWER_INPUT = { limit: 20 } as const;
 const GUESTBOOK_FIELD_ORDER = ["name", "message"] as const satisfies ReadonlyArray<keyof GuestbookCreateInput>;
 
-export function GuestbookSection({ onOpenViewer }: GuestbookSectionProps) {
+export const GuestbookSection = memo(function GuestbookSection({
+  onOpenViewer,
+}: GuestbookSectionProps) {
   const utils = trpc.useUtils();
   const previewQuery = trpc.wedding.guestbookList.useQuery(PREVIEW_INPUT);
   const countQuery = trpc.wedding.guestbookCount.useQuery();
@@ -68,6 +72,11 @@ export function GuestbookSection({ onOpenViewer }: GuestbookSectionProps) {
   const isError = Boolean(fieldError ?? submissionError);
   const isNameInvalid = Boolean(errors.name) || isNameConflict;
   const isMessageInvalid = Boolean(errors.message);
+  const prefetchViewerEntries = () => {
+    void utils.wedding.guestbookList.prefetchInfinite(VIEWER_INPUT, {
+      staleTime: 60_000,
+    });
+  };
 
   return (
     <section className="bg-brand-beige/10 px-6 py-20">
@@ -172,6 +181,10 @@ export function GuestbookSection({ onOpenViewer }: GuestbookSectionProps) {
           <button
             type="button"
             onClick={onOpenViewer}
+            onFocus={prefetchViewerEntries}
+            onPointerEnter={prefetchViewerEntries}
+            onPointerDown={prefetchViewerEntries}
+            onTouchStart={prefetchViewerEntries}
             className="flex w-full items-center justify-center gap-2 rounded-full border border-brand-gold/30 bg-white px-8 py-3.5 text-sm font-medium text-brand-gold shadow-sm transition-all hover:bg-brand-beige active:scale-95"
           >
             <MessageCircle size={16} />
@@ -182,7 +195,7 @@ export function GuestbookSection({ onOpenViewer }: GuestbookSectionProps) {
       </div>
     </section>
   );
-}
+});
 
 function celebrateGuestbookEntry() {
   const brandColors = ["#C5A059", "#E8D5A8", "#F5F2ED", "#B98D4A"];
