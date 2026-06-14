@@ -53,16 +53,22 @@ export function LocationSection() {
 
       <KakaoMap title={location.venue} />
 
-      <div className="space-y-9 text-center">
-        <div className="mx-auto max-w-[310px] space-y-3">
-          <h4 className="text-sm font-medium uppercase tracking-widest text-brand-gold">Subway</h4>
-          <p className="text-center text-sm leading-relaxed text-brand-muted">
-            {location.transitLines.map((line) => (
-              <span key={line} className="block">
-                {line}
-              </span>
-            ))}
-          </p>
+      <div className="space-y-10">
+        <div className="mx-auto max-w-[340px] divide-y divide-brand-gold/10 rounded-lg border border-brand-gold/10 bg-brand-beige/10 px-5">
+          {location.directions.map((direction) => (
+            <div key={direction.title} className="py-5">
+              <h4 className="mb-2.5 text-sm font-semibold text-brand-gold">
+                {direction.title}
+              </h4>
+              <div className="space-y-1.5 text-sm leading-relaxed text-brand-muted">
+                {direction.lines.map((line) => (
+                  <p key={line} className="break-keep">
+                    {line}
+                  </p>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
 
         <div className="flex items-center justify-center gap-5">
