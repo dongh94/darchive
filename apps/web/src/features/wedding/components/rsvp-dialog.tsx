@@ -8,6 +8,7 @@ import { Loader2, X } from "lucide-react";
 import { rsvpInputSchema, type RsvpInput } from "@darchive/api/schemas";
 import { trpc } from "@/shared/lib/trpc";
 import { cn } from "../lib/utils";
+import { useBodyScrollLock } from "../lib/use-body-scroll-lock";
 
 type RsvpDialogProps = {
   onClose: () => void;
@@ -19,6 +20,8 @@ const RSVP_FIELD_ORDER = ["name", "attendance", "guestCount", "phone", "message"
 >;
 
 export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
+  useBodyScrollLock();
+
   const submitRsvp = trpc.wedding.rsvpCreate.useMutation({
     onSuccess: () => onSubmitted(),
   });
@@ -55,7 +58,7 @@ export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
   const isNameInvalid = Boolean(errors.name);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center px-5 py-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center overscroll-none px-5 py-4">
       <motion.button
         type="button"
         initial={{ opacity: 0 }}
@@ -69,7 +72,7 @@ export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        className="relative max-h-[calc(100dvh-2rem)] w-full max-w-[360px] overflow-y-auto rounded-xl bg-white shadow-2xl"
+        className="relative max-h-[calc(100dvh-2rem)] w-full max-w-[360px] overflow-y-auto overscroll-contain rounded-xl bg-white shadow-2xl"
       >
         <div className="space-y-5 p-6 sm:p-7">
           <div className="flex items-center justify-between">
