@@ -41,3 +41,9 @@
 .wedding-page .fade-in.visible {
   @apply opacity-100 translate-y-0;
 }
+
+.wedding-page input,
+.wedding-page textarea,
+.wedding-page select {
+  font-size: 16px;
+}

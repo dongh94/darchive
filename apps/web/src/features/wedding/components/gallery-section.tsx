@@ -8,6 +8,7 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, X } from "lucide-react";
 import { weddingContent } from "../data/wedding-content";
+import { useBodyScrollLock } from "../lib/use-body-scroll-lock";
 import { SectionHeader } from "./section-header";
 
 const INITIAL_IMAGE_COUNT = 9;
@@ -100,8 +101,13 @@ function GalleryLightbox({
   const viewportRef = useRef<HTMLDivElement>(null);
   const pointerStartXRef = useRef(0);
   const pointerStartTimeRef = useRef(0);
+  const activePointerIdRef = useRef<number | null>(null);
+  const isTouchDraggingRef = useRef(false);
+  const dragOffsetRef = useRef(0);
   const transitionTimeoutRef = useRef<number | null>(null);
   const imageCount = weddingContent.gallery.length;
+
+  useBodyScrollLock();
 
   const clearTransitionTimeout = useCallback(() => {
     if (transitionTimeoutRef.current !== null) {
@@ -120,6 +126,7 @@ function GalleryLightbox({
           setSelectedIndex(nextIndex);
         }
 
+        dragOffsetRef.current = 0;
         setDragOffset(0);
         transitionTimeoutRef.current = null;
       }, SLIDE_TRANSITION_DURATION);
@@ -150,9 +157,6 @@ function GalleryLightbox({
   }, [selectedIndex]);
 
   useEffect(() => {
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         onClose();
@@ -166,7 +170,6 @@ function GalleryLightbox({
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [navigate, onClose]);
@@ -174,43 +177,104 @@ function GalleryLightbox({
   useEffect(() => clearTransitionTimeout, [clearTransitionTimeout]);
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (isAnimating) {
+    if (isAnimating || event.pointerType !== "mouse") {
       return;
     }
 
+    activePointerIdRef.current = event.pointerId;
     event.currentTarget.setPointerCapture(event.pointerId);
     pointerStartXRef.current = event.clientX;
     pointerStartTimeRef.current = performance.now();
   };
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!event.currentTarget.hasPointerCapture(event.pointerId) || isAnimating) {
+    if (
+      event.pointerType !== "mouse" ||
+      activePointerIdRef.current !== event.pointerId ||
+      isAnimating
+    ) {
       return;
     }
 
-    const viewportWidth = viewportRef.current?.clientWidth ?? 410;
-    const nextOffset = event.clientX - pointerStartXRef.current;
-    setDragOffset(Math.max(-viewportWidth, Math.min(viewportWidth, nextOffset)));
+    updateDragOffset(event.clientX);
   };
 
   const handlePointerEnd = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!event.currentTarget.hasPointerCapture(event.pointerId) || isAnimating) {
+    if (
+      event.pointerType !== "mouse" ||
+      activePointerIdRef.current !== event.pointerId ||
+      isAnimating
+    ) {
       return;
     }
 
-    event.currentTarget.releasePointerCapture(event.pointerId);
+    activePointerIdRef.current = null;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    finishDrag();
+  };
+
+  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (isAnimating || event.touches.length !== 1) {
+      return;
+    }
+
+    isTouchDraggingRef.current = true;
+    pointerStartXRef.current = event.touches[0].clientX;
+    pointerStartTimeRef.current = performance.now();
+    dragOffsetRef.current = 0;
+  };
+
+  const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (
+      !isTouchDraggingRef.current ||
+      isAnimating ||
+      event.touches.length !== 1
+    ) {
+      return;
+    }
+
+    updateDragOffset(event.touches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!isTouchDraggingRef.current || isAnimating) {
+      return;
+    }
+
+    isTouchDraggingRef.current = false;
+    finishDrag();
+  };
+
+  const updateDragOffset = (clientX: number) => {
+    const viewportWidth = viewportRef.current?.clientWidth ?? 410;
+    const nextOffset = clientX - pointerStartXRef.current;
+    const boundedOffset = Math.max(
+      -viewportWidth,
+      Math.min(viewportWidth, nextOffset),
+    );
+
+    dragOffsetRef.current = boundedOffset;
+    setDragOffset(boundedOffset);
+  };
+
+  const finishDrag = () => {
+    const finalDragOffset = dragOffsetRef.current;
     const elapsedTime = Math.max(performance.now() - pointerStartTimeRef.current, 1);
-    const velocity = dragOffset / elapsedTime;
+    const velocity = finalDragOffset / elapsedTime;
     const viewportWidth = viewportRef.current?.clientWidth ?? 410;
     const shouldNavigate =
-      Math.abs(dragOffset) > viewportWidth * 0.14 || Math.abs(velocity) > 0.45;
+      Math.abs(finalDragOffset) > viewportWidth * 0.14 ||
+      Math.abs(velocity) > 0.45;
 
-    if (shouldNavigate && dragOffset !== 0) {
-      navigate(dragOffset < 0 ? "next" : "previous");
+    if (shouldNavigate && finalDragOffset !== 0) {
+      navigate(finalDragOffset < 0 ? "next" : "previous");
       return;
     }
 
     setIsAnimating(true);
+    dragOffsetRef.current = 0;
     setDragOffset(0);
     completeTransition(null);
   };
@@ -231,7 +295,7 @@ function GalleryLightbox({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.14 }}
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/85 p-3 sm:p-6"
+      className="fixed inset-0 z-[200] flex touch-none items-center justify-center overscroll-none bg-black/85 p-3 sm:p-6"
     >
       <button
         type="button"
@@ -282,11 +346,15 @@ function GalleryLightbox({
         <div className="relative bg-brand-beige/70">
           <div
             ref={viewportRef}
-            className="aspect-[3/4] max-h-[calc(100dvh-136px)] cursor-grab touch-pan-y overflow-hidden active:cursor-grabbing"
+            className="aspect-[3/4] max-h-[calc(100dvh-136px)] cursor-grab touch-pan-y overflow-hidden overscroll-contain active:cursor-grabbing"
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerEnd}
             onPointerCancel={handlePointerEnd}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onTouchCancel={handleTouchEnd}
           >
             <div
               className="flex h-full w-full will-change-transform"

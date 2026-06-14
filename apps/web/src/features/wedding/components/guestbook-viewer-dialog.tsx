@@ -7,6 +7,7 @@ import { Loader2, Search, X } from "lucide-react";
 import { trpc } from "@/shared/lib/trpc";
 import { useDebouncedValue } from "@/shared/lib/use-debounced-value";
 import { cn } from "../lib/utils";
+import { useBodyScrollLock } from "../lib/use-body-scroll-lock";
 import { GuestbookEntryCard } from "./guestbook-entry-card";
 
 const SEARCH_DEBOUNCE_MS = 500;
@@ -23,6 +24,8 @@ type DeleteTarget = {
 };
 
 export function GuestbookViewerDialog({ onClose }: GuestbookViewerDialogProps) {
+  useBodyScrollLock();
+
   const utils = trpc.useUtils();
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearch = useDebouncedValue(searchInput.trim(), SEARCH_DEBOUNCE_MS);
@@ -51,15 +54,6 @@ export function GuestbookViewerDialog({ onClose }: GuestbookViewerDialogProps) {
     },
   });
 
-  useEffect(() => {
-    if (typeof document === "undefined") return;
-    const original = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = original;
-    };
-  }, []);
-
   const entries = listQuery.data?.pages.flatMap((page) => page.items) ?? [];
   const isInitialLoading = listQuery.isPending;
   const isRefetchingSearch =
@@ -79,7 +73,7 @@ export function GuestbookViewerDialog({ onClose }: GuestbookViewerDialogProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center px-5 py-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center overscroll-none px-5 py-4">
       <motion.button
         type="button"
         initial={{ opacity: 0 }}
@@ -147,7 +141,7 @@ export function GuestbookViewerDialog({ onClose }: GuestbookViewerDialogProps) {
           </label>
         </div>
 
-        <div className="flex-1 overflow-y-auto bg-brand-beige/10 px-5 py-4">
+        <div className="flex-1 overflow-y-auto overscroll-contain bg-brand-beige/10 px-5 py-4">
           {isInitialLoading ? (
             <div className="flex items-center justify-center py-12 text-brand-muted">
               <Loader2 size={20} className="animate-spin" />
