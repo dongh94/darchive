@@ -1,0 +1,85 @@
+---
+description: tRPC v11 router structure, Next.js App Router integration, client usage
+alwaysApply: true
+---
+
+# tRPC v11
+
+All type-safe application APIs live in `packages/api`. Web app calls them via a typed client; never reach into Prisma from React components.
+
+## Package Layout (`packages/api`)
+
+```text
+packages/api/src/
+  trpc.ts          # initTRPC + context + procedure helpers
+  root.ts          # appRouter composition; export type AppRouter
+  routers/
+    wedding.ts     # feature routers
+  index.ts         # re-exports appRouter, AppRouter type, createContext
+```
+
+## Router Setup
+
+```ts
+// packages/api/src/trpc.ts
+import { initTRPC } from "@trpc/server";
+import superjson from "superjson";
+
+export const createTRPCContext = async () => ({ /* request-scoped deps */ });
+
+const t = initTRPC.context<Awaited<ReturnType<typeof createTRPCContext>>>().create({
+  transformer: superjson,
+});
+
+export const router = t.router;
+export const publicProcedure = t.procedure;
+```
+
+```ts
+// packages/api/src/routers/wedding.ts
+import { z } from "zod";
+import { getPrisma } from "@darchive/db";
+import { router, publicProcedure } from "../trpc";
+
+export const weddingRouter = router({
+  guestbookList: publicProcedure.query(() => getPrisma().weddingGuestbookEntry.findMany({
+    where: { isVisible: true },
+    orderBy: { createdAt: "desc" },
+    take: 30,
+    select: { id: true, name: true, message: true, createdAt: true },
+  })),
+  guestbookCreate: publicProcedure
+    .input(z.object({ name: z.string().max(40), message: z.string().max(500) }))
+    .mutation(({ input }) => getPrisma().weddingGuestbookEntry.create({
+      data: input,
+      select: { id: true, name: true, message: true, createdAt: true },
+    })),
+});
+```
+
+## Next.js App Router Handler
+
+```ts
+// apps/web/src/app/api/trpc/[trpc]/route.ts
+import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
+import { appRouter, createTRPCContext } from "@darchive/api";
+
+const handler = (req: Request) =>
+  fetchRequestHandler({ endpoint: "/api/trpc", req, router: appRouter, createContext: createTRPCContext });
+
+export { handler as GET, handler as POST };
+```
+
+## Client (React Query Integration)
+
+- Use `@trpc/react-query` `createTRPCReact<AppRouter>()` and provide a `TRPCProvider` next to `QueryClientProvider`.
+- Call procedures via hooks: `trpc.wedding.guestbookList.useQuery()` / `.useMutation()`.
+- Validate inputs with Zod inside `.input(...)` — never trust the client.
+- Throw `TRPCError` (e.g. `new TRPCError({ code: "BAD_REQUEST", message: "..." })`) for typed errors.
+
+## Rules
+
+- New backend endpoints must be tRPC procedures, not raw `app/api/*/route.ts` handlers (the trpc fetch handler is the only `route.ts` allowed for app APIs).
+- Keep procedure files small and feature-scoped under `routers/`.
+- Export only `AppRouter` **type** to the web app — never the runtime router instance.
+- Reuse Zod input schemas between server (`.input`) and client forms.

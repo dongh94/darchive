@@ -1,0 +1,76 @@
+---
+description: Next.js 16 App Router conventions (async APIs, caching, proxy, Turbopack)
+alwaysApply: true
+---
+
+# Next.js 16 App Router
+
+Project uses Next.js 16 (App Router) on Node.js runtime, Turbopack as the default bundler.
+
+## Async Request APIs (BREAKING in v16)
+
+`params`, `searchParams`, `cookies()`, `headers()`, and `draftMode()` are all async. Always `await` them.
+
+```ts
+// ❌ BAD (Next 15 style)
+export default function Page({ params }: { params: { id: string } }) {
+  return <div>{params.id}</div>;
+}
+
+// ✅ GOOD
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return <div>{id}</div>;
+}
+```
+
+In Client Components, unwrap with `use()`:
+
+```tsx
+"use client";
+import { use } from "react";
+
+export default function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  return <div>{id}</div>;
+}
+```
+
+## Server Components by Default
+
+- Components are server-rendered unless `"use client"` is at the top.
+- Add `"use client"` only when state, effects, refs, browser APIs, or event handlers are needed.
+- Fetch data in server components close to where it is used; avoid prop-drilling.
+- Wrap independently-loading sections with `<Suspense>` and run independent fetches with `Promise.all`.
+
+## Caching (Cache Components Model)
+
+- Caching is **opt-in** in v16. Dynamic code executes at request time by default.
+- Mark cacheable work explicitly with `"use cache"`.
+- Use `revalidateTag()` for time-based revalidation and `updateTag()` for on-demand updates.
+
+```ts
+async function getEntries() {
+  "use cache";
+  return prisma.weddingGuestbookEntry.findMany();
+}
+```
+
+## Proxy (formerly Middleware)
+
+- `middleware.ts` is now `proxy.ts`, runs on Node.js by default.
+- Use `ProxyRequest` / `ProxyResponse` instead of `NextRequest` / `NextResponse`.
+- Define `matcher` config; route matching is no longer implicit.
+
+## Routing & Files
+
+- Keep `src/app/**/page.tsx` and `layout.tsx` thin; compose feature components.
+- Place route handlers under `src/app/api/<route>/route.ts`. Prefer delegating logic to `@darchive/api`.
+- Use `next/link` for internal navigation and `next/image` for meaningful images.
+- Do NOT colocate reusable components under `src/app`. Use `src/features/*` or `src/shared/ui`.
+
+## Build & Tooling
+
+- Turbopack is default for `next dev` and `next build`. Do not add custom webpack config.
+- `next lint` is removed; run ESLint directly via `pnpm lint`.
+- Node 20.9+, TypeScript 5.1+ required.

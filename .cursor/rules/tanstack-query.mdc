@@ -1,0 +1,64 @@
+---
+description: TanStack Query v5 conventions (queryKey, mutations, suspense, SSR)
+alwaysApply: true
+---
+
+# TanStack Query v5
+
+Used for client-side data fetching in `apps/web`. Pair with tRPC when calling backend procedures.
+
+## Provider
+
+- Create one `QueryClient` per browser session via `useState(() => new QueryClient(...))` inside a `"use client"` provider.
+- Set sensible defaults: `refetchOnWindowFocus: false`, `retry: 1` (already configured in `WeddingQueryProvider`).
+
+## Query Keys
+
+- Keys are arrays starting with a feature namespace: `["wedding", "guestbook"]`, `["wedding", "guestbook", { id }]`.
+- Centralize keys in a `queryKeys.ts` module when they grow; avoid stringly-typed keys scattered across files.
+
+## v5 API Changes (vs v4)
+
+```ts
+// ❌ REMOVED: callbacks on useQuery
+useQuery({ queryKey, queryFn, onSuccess, onError }); // ❌ no longer exists
+
+// ✅ Handle results from returned data/error
+const { data, error, isPending, isError } = useQuery({ queryKey, queryFn });
+useEffect(() => { if (error) toast.error(...); }, [error]);
+```
+
+- `isLoading` → use **`isPending`** for "no data yet" and `isFetching` for "any in-flight".
+- `cacheTime` → renamed **`gcTime`**.
+- Single signature: hooks now take exactly one object argument.
+- `useMutation` **still has `onSuccess` / `onError` / `onSettled`** — use those for side effects on writes.
+
+## Mutations
+
+```ts
+const create = useMutation({
+  mutationFn: createGuestbookEntryRequest,
+  onSuccess: (entry) => {
+    queryClient.setQueryData<GuestbookEntry[]>(
+      ["wedding", "guestbook"],
+      (prev) => [entry, ...(prev ?? [])],
+    );
+  },
+});
+create.mutate(input); // or await create.mutateAsync(input)
+```
+
+- Prefer `queryClient.setQueryData` for optimistic insert/update; fall back to `invalidateQueries` when in doubt.
+- Use `mutation.isPending` (not `isLoading`) for the submit-in-flight state.
+
+## Suspense / SSR
+
+- Use `useSuspenseQuery` to read data with Suspense boundaries.
+- For SSR/RSC handoff, prefetch on the server via `queryClient.prefetchQuery` and pass `dehydrate(queryClient)` to a `<HydrationBoundary>` on the client.
+
+## Rules
+
+- Do NOT use `useEffect` + `fetch` for data fetching in client components — use `useQuery` or a tRPC hook.
+- Always pass an `AbortSignal` from `queryFn` context to underlying fetches when supported.
+- Co-locate query/mutation hooks with their feature in `src/features/<feature>/hooks/`.
+- Never instantiate a new `QueryClient` inside a render body — wrap with `useState` or a module-level singleton on the server.

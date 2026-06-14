@@ -1,0 +1,74 @@
+---
+description: shadcn/ui conventions (Radix + cva + cn) for shared UI primitives
+alwaysApply: true
+---
+
+# shadcn/ui Conventions
+
+Shared UI primitives live in `apps/web/src/shared/ui/` and follow the shadcn/ui pattern: Radix primitives + `class-variance-authority` (cva) for variants + `cn()` (clsx + tailwind-merge) for class composition.
+
+## File Layout
+
+```text
+apps/web/src/shared/ui/
+  button.tsx
+  dialog.tsx
+  input.tsx
+  ...
+src/shared/lib/cn.ts   # the cn helper
+```
+
+- One primitive per file. Filename `kebab-case`, exported component `PascalCase`.
+- Feature code (in `src/features/*`) MUST import from `src/shared/ui` before building local variants.
+
+## `cn` Helper
+
+```ts
+// src/shared/lib/cn.ts
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+## Component Pattern (cva + Radix Slot)
+
+```tsx
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/shared/lib/cn";
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-brand-gold text-white hover:bg-brand-gold/90",
+        ghost: "hover:bg-brand-gold/10",
+      },
+      size: { sm: "h-8 px-3", md: "h-10 px-4", lg: "h-12 px-6" },
+    },
+    defaultVariants: { variant: "default", size: "md" },
+  },
+);
+
+type ButtonProps = React.ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & { asChild?: boolean };
+
+export function Button({ className, variant, size, asChild, ref, ...props }: ButtonProps) {
+  const Comp = asChild ? Slot : "button";
+  return <Comp ref={ref} className={cn(buttonVariants({ variant, size }), className)} {...props} />;
+}
+```
+
+## Rules
+
+- Use Radix primitives (already installed: `@radix-ui/react-*`) for accessibility-critical components: Dialog, DropdownMenu, Tooltip, Tabs, etc.
+- Use `asChild` + `Slot` so consumers can pass `<Link>` or other components without nested DOM.
+- Use React 19's ref-as-prop (no `forwardRef`).
+- Export the `cva` variants object alongside the component when consumers may need to reuse classes (e.g. `buttonVariants`).
+- Keep variant tokens in sync with `@theme` tokens — do not hardcode colors that exist as Tailwind tokens.
+- Do NOT install raw shadcn components blindly. Strip example comments, align color tokens with our `@theme`, and remove unused variants.

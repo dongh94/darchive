@@ -1,11 +1,12 @@
-import { Calendar, MessageSquare } from "lucide-react";
+import { Calendar, MessageSquare, Send } from "lucide-react";
 
 type ClosingSectionProps = {
   addToCalendar: () => void;
+  onRsvp: () => void;
   onShare: () => void;
 };
 
-export function ClosingSection({ addToCalendar, onShare }: ClosingSectionProps) {
+export function ClosingSection({ addToCalendar, onRsvp, onShare }: ClosingSectionProps) {
   return (
     <section className="bg-white px-6 py-20 pb-32 text-center">
       <div className="space-y-8">
@@ -18,6 +19,14 @@ export function ClosingSection({ addToCalendar, onShare }: ClosingSectionProps) 
         </div>
 
         <div className="mt-8 flex flex-col gap-4">
+          <button
+            type="button"
+            onClick={onRsvp}
+            className="flex items-center justify-center gap-2 rounded-full bg-brand-ink px-8 py-4 text-sm font-medium text-white shadow-md transition-all hover:bg-brand-ink/90 active:scale-95"
+          >
+            <Send size={18} />
+            참석 의사 전달하기
+          </button>
           <button
             type="button"
             onClick={addToCalendar}

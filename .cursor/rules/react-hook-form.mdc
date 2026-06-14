@@ -1,0 +1,69 @@
+---
+description: React Hook Form 7 + Zod usage for non-trivial forms
+alwaysApply: true
+---
+
+# React Hook Form 7
+
+Use React Hook Form for any form with more than 2 inputs or with cross-field validation. Pair with the Zod schemas defined in `src/features/<feature>/schemas.ts`.
+
+## Setup
+
+Install the Zod resolver (one-time): `pnpm --filter @darchive/web add @hookform/resolvers`.
+
+```tsx
+"use client";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { guestbookCreateInputSchema, type GuestbookCreateInput } from "../schemas";
+
+export function GuestbookForm() {
+  const form = useForm<GuestbookCreateInput>({
+    resolver: zodResolver(guestbookCreateInputSchema),
+    defaultValues: { name: "", message: "" },
+  });
+
+  const onSubmit = form.handleSubmit(async (values) => {
+    await createMutation.mutateAsync(values);
+    form.reset();
+  });
+
+  return (
+    <form onSubmit={onSubmit}>
+      <input {...form.register("name")} maxLength={40} />
+      {form.formState.errors.name ? <p>{form.formState.errors.name.message}</p> : null}
+      <textarea {...form.register("message")} maxLength={500} />
+      <button type="submit" disabled={form.formState.isSubmitting}>Send</button>
+    </form>
+  );
+}
+```
+
+## Controller for Non-Native Inputs
+
+Use `<Controller>` for Radix/MUI/custom controlled inputs (Select, Switch, DatePicker, etc.):
+
+```tsx
+import { Controller } from "react-hook-form";
+
+<Controller
+  control={form.control}
+  name="attendance"
+  render={({ field }) => (
+    <RadioGroup value={field.value} onValueChange={field.onChange}>{/* ... */}</RadioGroup>
+  )}
+/>
+```
+
+## Rules
+
+- One Zod schema per form, reused on the server (tRPC `.input(...)`) and the client (`zodResolver`).
+- Read submit state from `form.formState.isSubmitting` (not custom state).
+- Do NOT manually call `safeParse` inside `onSubmit` — the resolver does it.
+- Use `form.reset()` after successful submission instead of resetting individual fields.
+- Avoid `useState` for form fields — that's what RHF replaces.
+- For optimistic UI, call `mutation.mutate(values)` and `form.reset()` in the same tick; rely on TanStack Query for rollback.
+
+## When to Skip RHF
+
+For a single-field input (search box, toggle), `useState` is fine. Don't pull in RHF for trivial state.

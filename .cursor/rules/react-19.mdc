@@ -1,0 +1,80 @@
+---
+description: React 19 patterns (use, Actions, useOptimistic, ref-as-prop)
+alwaysApply: true
+---
+
+# React 19
+
+Project uses React 19. Prefer the new primitives below over older patterns.
+
+## `use()` for Promises & Context
+
+`use()` unwraps a promise or reads a context. It can be called inside Suspense and conditionally (unlike other hooks).
+
+```tsx
+"use client";
+import { use } from "react";
+
+export function Profile({ userPromise }: { userPromise: Promise<User> }) {
+  const user = use(userPromise);
+  return <p>{user.name}</p>;
+}
+```
+
+## `ref` is a Prop (no `forwardRef`)
+
+```tsx
+// ❌ BAD
+const Input = forwardRef<HTMLInputElement, Props>((props, ref) => <input ref={ref} {...props} />);
+
+// ✅ GOOD
+function Input({ ref, ...props }: Props & { ref?: React.Ref<HTMLInputElement> }) {
+  return <input ref={ref} {...props} />;
+}
+```
+
+## Form Actions
+
+Pass a function to `<form action={...}>` for progressive-enhancement-friendly submissions.
+
+```tsx
+"use client";
+import { useActionState } from "react";
+
+async function submit(prev: State, formData: FormData) {
+  // server action or async fn
+}
+
+export function MyForm() {
+  const [state, formAction, isPending] = useActionState(submit, initialState);
+  return <form action={formAction}>{/* ... */}</form>;
+}
+```
+
+## `useOptimistic` for Optimistic UI
+
+```tsx
+const [optimisticList, addOptimistic] = useOptimistic(
+  list,
+  (state, newItem: Item) => [newItem, ...state],
+);
+```
+
+## `useFormStatus` Inside `<form>` Children
+
+```tsx
+import { useFormStatus } from "react-dom";
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return <button disabled={pending}>Send</button>;
+}
+```
+
+## General Rules
+
+- Avoid `useEffect` for derived state — compute during render.
+- Keep effect dependencies narrow and correct.
+- Use functional state updates (`setX(prev => ...)`) when the next value depends on the previous one.
+- Prefer explicit conditional rendering (`cond ? <X /> : null`) over `&&` when `cond` can be `0` or `""`.
+- Don't barrel-import large modules into client components; import directly from source.

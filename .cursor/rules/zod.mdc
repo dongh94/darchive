@@ -1,0 +1,70 @@
+---
+description: Zod 4 schema and validation conventions
+alwaysApply: true
+---
+
+# Zod 4
+
+Used for runtime validation of API inputs, API responses, and form data. Schemas are the single source of truth — derive TS types via `z.infer`.
+
+## v4 API Changes (vs v3)
+
+### Unified `error` Parameter
+
+```ts
+// ❌ v3 (removed in v4)
+z.string({ required_error: "이름을 입력해주세요.", invalid_type_error: "문자여야 합니다." });
+z.string({ message: "..." });
+
+// ✅ v4
+z.string({ error: "이름을 입력해주세요." });
+// Function form for issue-aware messages
+z.string({ error: (iss) => iss.input === undefined ? "필수 입력" : "문자여야 합니다." });
+```
+
+- `message` is deprecated (still works). Prefer `error`.
+- `errorMap` renamed to `error` and may return a plain string or `undefined` (yields to next map).
+
+### Issue Types
+
+Issue types moved under `z.core.$ZodIssue*`. Several merged into `$ZodIssueInvalidValue`. Access first issue via `result.error.issues[0]`.
+
+### `z.function`
+
+Throws `ZodError` directly. No more `ZodInvalidArguments` / `ZodInvalidReturnType`.
+
+## Schema Conventions
+
+- Place feature schemas in `src/features/<feature>/schemas.ts` or `packages/api/.../schemas`.
+- Export both schema and inferred type:
+
+```ts
+export const guestbookCreateInputSchema = z.object({
+  name: z.string().trim().min(1, "성함을 확인해주세요.").max(40, "성함을 확인해주세요."),
+  message: z.string().trim().min(1, "메시지를 확인해주세요.").max(500, "메시지를 확인해주세요."),
+});
+export type GuestbookCreateInput = z.infer<typeof guestbookCreateInputSchema>;
+```
+
+- Use `z.input<typeof S>` for form/raw types, `z.infer<typeof S>` (== `z.output`) for post-transform types.
+
+## Parsing
+
+```ts
+// ✅ Boundary validation — never throw across UI boundaries unexpectedly
+const result = schema.safeParse(input);
+if (!result.success) {
+  return { error: result.error.issues[0]?.message ?? "입력을 확인해주세요." };
+}
+const value = result.data;
+```
+
+- Use `safeParse` at the network boundary (route handler, tRPC `.input`, client form submit).
+- Use `parse` only when failure is genuinely exceptional (e.g. internal trusted data).
+- Avoid `.flatten()` (deprecated in v4) — iterate `error.issues` directly or use `z.treeifyError`.
+
+## Cross-Boundary Sharing
+
+- Define the schema ONCE. Import it in both the tRPC procedure (`.input(schema)`) and the client form.
+- Do NOT duplicate validation rules between server and client.
+- Strings entered by users should be trimmed (`.trim()`) and length-bounded in the schema, not in components.

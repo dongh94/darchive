@@ -1,0 +1,63 @@
+---
+description: Tailwind CSS 4 (CSS-first config, @theme, design tokens)
+alwaysApply: true
+---
+
+# Tailwind CSS 4
+
+Project uses Tailwind v4 with **CSS-first configuration**. There is no `tailwind.config.js` — tokens and customization live in CSS via `@theme`.
+
+## Entry CSS
+
+```css
+/* apps/web/src/styles/tailwind.css (or wherever it's imported) */
+@import "tailwindcss";
+
+@theme {
+  --color-brand-gold: oklch(0.78 0.10 80);
+  --color-brand-ink: #1a1a1a;
+  --spacing-128: 32rem;
+  --font-serif: "Cormorant Garamond", serif;
+}
+```
+
+- Replace v3's `@tailwind base; @tailwind components; @tailwind utilities;` with a single `@import "tailwindcss";`.
+- Define design tokens as CSS variables under `@theme` using namespaced names (`--color-*`, `--font-*`, `--spacing-*`, `--radius-*`, `--breakpoint-*`, `--shadow-*`).
+- Tokens defined under `@theme` become utilities automatically: `--color-brand-gold` → `bg-brand-gold`, `text-brand-gold`, etc.
+
+## PostCSS / Plugin
+
+- Use `@tailwindcss/postcss` (already in deps). Do not pull in the legacy `tailwindcss` core package as a PostCSS plugin.
+- Content paths are auto-detected; no `content: [...]` config required.
+
+## Theme Customization
+
+- Extend tokens: just add CSS variables under `@theme`.
+- Override tokens: redefine the variable inside a selector (e.g. `:root`, `.dark`, `[data-theme="x"]`).
+- Reference tokens in arbitrary CSS via `var(--color-brand-gold)`.
+
+## Dark Mode / Theming
+
+Use a CSS-driven approach (works well with `next-themes`):
+
+```css
+@custom-variant dark (&:where(.dark, .dark *));
+```
+
+Then `dark:bg-brand-ink` etc. work as expected.
+
+## Class Composition
+
+- Use the `cn()` helper (clsx + tailwind-merge) from `src/shared/lib` to merge classes safely:
+
+```tsx
+<div className={cn("rounded-md p-4", isActive && "bg-brand-gold", className)} />
+```
+
+- Use `class-variance-authority` (cva) for component variants — see the shadcn-ui rule.
+
+## Anti-Patterns
+
+- ❌ Do NOT recreate a `tailwind.config.ts/js` for v4. Use `@theme` in CSS.
+- ❌ Do NOT use `@apply` to build complex components — compose with `cn()` instead. Reserve `@apply` for very small primitives.
+- ❌ Do NOT hardcode colors when a token exists. Add a token to `@theme` if one is missing.

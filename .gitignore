@@ -6,6 +6,7 @@ build
 tsconfig.tsbuildinfo
 .env
 .env*.local
+packages/db/src/generated/prisma
 .vercel
 .idea
 .DS_Store

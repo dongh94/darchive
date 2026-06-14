@@ -6,7 +6,7 @@ import { LocateFixed } from "lucide-react";
 import { weddingContent } from "../data/wedding-content";
 import { SectionHeader } from "./section-header";
 
-const kakaoMapAppKey = process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY ?? "79c2e2547531e3ae08f59b315239fda6";
+const kakaoMapAppKey = process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY;
 const kakaoMapScriptId = "kakao-map-sdk";
 const naverMapUrl = "https://brr.kr/hhqc59";
 const kakaoMapUrl = "https://brr.kr/i665g1";
@@ -161,6 +161,10 @@ function KakaoMap({ title }: { title: string }) {
 }
 
 function loadKakaoMapScript() {
+  if (!kakaoMapAppKey) {
+    return Promise.reject(new Error("NEXT_PUBLIC_KAKAO_MAP_APP_KEY is not configured"));
+  }
+
   if (window.kakao?.maps) {
     return loadKakaoMaps();
   }
