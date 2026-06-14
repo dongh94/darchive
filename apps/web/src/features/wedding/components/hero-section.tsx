@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Camera } from "lucide-react";
 import { weddingContent } from "../data/wedding-content";
@@ -12,11 +12,26 @@ const shutterFlashDelaySeconds = 0.5;
 const photoRevealDurationSeconds = 1.65;
 const polaroidControlButtonClassName =
   "absolute top-4 z-[70] flex h-9 w-9 items-center justify-center rounded-full bg-white/88 text-brand-ink shadow-[0_8px_24px_rgba(44,44,44,0.14)] ring-1 ring-brand-gold/15 backdrop-blur";
+const subscribeToHeroImage = () => () => undefined;
+const initialClientHeroImageIndex =
+  typeof window === "undefined"
+    ? 0
+    : getRandomImageIndex(weddingContent.hero.images.length);
 
 export function HeroSection() {
   const [isIntroVisible, setIsIntroVisible] = useState(true);
+  const initialHeroImageIndex = useSyncExternalStore(
+    subscribeToHeroImage,
+    () => initialClientHeroImageIndex,
+    () => -1,
+  );
+  const [replayedHeroImageIndex, setReplayedHeroImageIndex] = useState<
+    number | null
+  >(null);
   const replayTimerRef = useRef<number | null>(null);
   const { event, hero, location } = weddingContent;
+  const heroImageIndex = replayedHeroImageIndex ?? initialHeroImageIndex;
+  const heroImage = hero.images[heroImageIndex];
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -50,6 +65,9 @@ export function HeroSection() {
     }
 
     playShutterClick();
+    setReplayedHeroImageIndex(
+      getRandomImageIndex(hero.images.length, heroImageIndex),
+    );
     setIsIntroVisible(true);
 
     replayTimerRef.current = window.setTimeout(() => {
@@ -73,7 +91,7 @@ export function HeroSection() {
         <PolaroidCard
           dateLabel={event.heroDateLabel}
           imageAlt={hero.imageAlt}
-          imageUrl={hero.imageUrl}
+          imageUrl={heroImage?.src}
           isIntroVisible={isIntroVisible}
           venue={location.venue}
         />
@@ -119,7 +137,7 @@ function PolaroidPhoto({
   isIntroVisible,
 }: {
   imageAlt: string;
-  imageUrl: string;
+  imageUrl?: string;
   isIntroVisible: boolean;
 }) {
   return (
@@ -133,15 +151,17 @@ function PolaroidPhoto({
       }}
       transition={{ delay: isIntroVisible ? 0 : 0.05, duration: 1.05, ease: "easeOut" }}
     >
-      <Image
-        src={imageUrl}
-        alt={imageAlt}
-        fill
-        priority
-        unoptimized
-        className="object-cover object-center"
-        sizes="325px"
-      />
+      {imageUrl ? (
+        <Image
+          src={imageUrl}
+          alt={imageAlt}
+          fill
+          priority
+          unoptimized
+          className="object-cover object-center"
+          sizes="325px"
+        />
+      ) : null}
       <AnimatePresence>{isIntroVisible ? <PhotoDevelopOverlay /> : null}</AnimatePresence>
     </motion.div>
   );
@@ -248,4 +268,20 @@ function playShutterClick() {
 
   // Browsers may reject media playback before the first user interaction.
   void audio.play().catch(() => undefined);
+}
+
+function getRandomImageIndex(imageCount: number, excludedIndex?: number) {
+  if (imageCount <= 1) {
+    return 0;
+  }
+
+  const randomIndex = Math.floor(
+    Math.random() * (excludedIndex === undefined ? imageCount : imageCount - 1),
+  );
+
+  if (excludedIndex === undefined || randomIndex < excludedIndex) {
+    return randomIndex;
+  }
+
+  return randomIndex + 1;
 }

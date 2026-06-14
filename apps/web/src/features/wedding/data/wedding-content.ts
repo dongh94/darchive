@@ -1,5 +1,26 @@
 import { weddingGallery } from "./wedding-gallery";
 
+const heroSourceFileNames = [
+  "a-11.JPG",
+  "b-07.JPG",
+  "c-08.JPG",
+  "d-03.JPG",
+  "e-04.JPG",
+  "f-01.JPG",
+] as const;
+
+const heroImages = heroSourceFileNames.map((sourceFileName) => {
+  const image = weddingGallery.find(
+    (galleryImage) => galleryImage.sourceFileName === sourceFileName,
+  );
+
+  if (!image) {
+    throw new Error(`Hero image not found: ${sourceFileName}`);
+  }
+
+  return image;
+});
+
 export const weddingContent = {
   couple: {
     groom: {
@@ -45,20 +66,54 @@ export const weddingContent = {
     transitLines: ["1호선, 서해선 소사역 1번출구 건너편 좌측(70m)", "소사어울마당삼거리 · MJ 컨벤션 정류장 하차"],
   },
   gallery: weddingGallery,
-  giftAccounts: [
+  giftAccountGroups: [
     {
-      side: "Groom's Side",
-      name: "김동희",
-      bank: "카카오뱅크",
-      account: "3333034454127",
-      kakaoPayUrl: "https://qr.kakaopay.com/FQSPFiqac",
+      side: "신랑 측",
+      accounts: [
+        {
+          relation: "신랑",
+          name: "김동희",
+          bank: "카카오뱅크",
+          account: "3333034454127",
+          kakaoPayUrl: "https://qr.kakaopay.com/FQSPFiqac",
+        },
+        {
+          relation: "신랑 아버지",
+          name: "김세철",
+          bank: "KB국민은행",
+          account: "729202-96-115192",
+        },
+        {
+          relation: "신랑 어머니",
+          name: "김민주",
+          bank: "KB국민은행",
+          account: "729202-01-037229",
+        },
+      ],
     },
     {
-      side: "Bride's Side",
-      name: "변지연",
-      bank: "카카오뱅크",
-      account: "3333012012534",
-      kakaoPayUrl: "https://qr.kakaopay.com/Ej9HFmeid",
+      side: "신부 측",
+      accounts: [
+        {
+          relation: "신부",
+          name: "변지연",
+          bank: "카카오뱅크",
+          account: "3333012012534",
+          kakaoPayUrl: "https://qr.kakaopay.com/Ej9HFmeid",
+        },
+        {
+          relation: "신부 아버지",
+          name: "황종규",
+          bank: "하나은행",
+          account: "488-910282-08207",
+        },
+        {
+          relation: "신부 어머니",
+          name: "강민경",
+          bank: "KB국민은행",
+          account: "66040201436738",
+        },
+      ],
     },
   ],
   share: {
@@ -66,7 +121,7 @@ export const weddingContent = {
     text: "2026년 9월 12일, 저희의 결혼식에 초대합니다.",
   },
   hero: {
-    imageUrl: "/images/wedding/hero-couple.jpeg",
+    images: heroImages,
     imageAlt: "김동희 변지연 웨딩 사진",
   },
 } as const;
