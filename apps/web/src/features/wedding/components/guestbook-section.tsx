@@ -22,8 +22,6 @@ type GuestbookSectionProps = {
 const PREVIEW_LIMIT = 3;
 const PREVIEW_INPUT = { limit: PREVIEW_LIMIT } as const;
 const VIEWER_INPUT = { limit: 20 } as const;
-const GUESTBOOK_FIELD_ORDER = ["name", "message"] as const satisfies ReadonlyArray<keyof GuestbookCreateInput>;
-
 export const GuestbookSection = memo(function GuestbookSection({
   onOpenViewer,
 }: GuestbookSectionProps) {
@@ -60,16 +58,12 @@ export const GuestbookSection = memo(function GuestbookSection({
   const previewEntries = previewQuery.data?.items ?? [];
   const totalCount = countQuery.data ?? 0;
   const errors = form.formState.errors;
-  const fieldError = GUESTBOOK_FIELD_ORDER.map((field) => errors[field]?.message).find((message) =>
-    Boolean(message),
-  );
   const submissionError = createGuestbookEntry.error?.message;
   const isNameConflict = createGuestbookEntry.error?.data?.code === "CONFLICT";
   const formMessage =
-    fieldError ??
     submissionError ??
     (createGuestbookEntry.isSuccess ? "소중한 마음이 전해졌습니다." : null);
-  const isError = Boolean(fieldError ?? submissionError);
+  const isError = Boolean(submissionError);
   const isNameInvalid = Boolean(errors.name) || isNameConflict;
   const isMessageInvalid = Boolean(errors.message);
   const prefetchViewerEntries = () => {
@@ -83,37 +77,45 @@ export const GuestbookSection = memo(function GuestbookSection({
       <SectionHeader eyebrow="Guestbook" title="축하의 마음" description="따뜻한 한마디를 남겨주세요" />
 
       <form onSubmit={onSubmit} className="space-y-3" noValidate>
-        <input
-          type="text"
-          {...form.register("name", {
-            onChange: () => {
-              if (createGuestbookEntry.error) createGuestbookEntry.reset();
-            },
-          })}
-          maxLength={40}
-          aria-invalid={isNameInvalid}
-          className={cn(
-            "w-full rounded-md border bg-white px-4 py-3 text-sm focus:outline-none",
-            isNameInvalid
-              ? "border-brand-ink/60 focus:border-brand-ink"
-              : "border-brand-gold/20 focus:border-brand-gold",
-          )}
-          placeholder="성함"
-          autoComplete="name"
-        />
-        <textarea
-          {...form.register("message")}
-          maxLength={500}
-          rows={4}
-          aria-invalid={isMessageInvalid}
-          className={cn(
-            "w-full resize-none rounded-md border bg-white px-4 py-3 text-sm leading-6 focus:outline-none",
-            isMessageInvalid
-              ? "border-brand-ink/60 focus:border-brand-ink"
-              : "border-brand-gold/20 focus:border-brand-gold",
-          )}
-          placeholder="축하 메시지를 입력해주세요"
-        />
+        <div className="space-y-1">
+          <input
+            type="text"
+            {...form.register("name", {
+              onChange: () => {
+                if (createGuestbookEntry.error) createGuestbookEntry.reset();
+              },
+            })}
+            maxLength={16}
+            aria-invalid={isNameInvalid}
+            aria-describedby={errors.name ? "guestbook-name-error" : undefined}
+            className={cn(
+              "w-full rounded-md border bg-white px-4 py-3 text-sm focus:outline-none",
+              isNameInvalid
+                ? "border-brand-ink/60 focus:border-brand-ink"
+                : "border-brand-gold/20 focus:border-brand-gold",
+            )}
+            placeholder="성함"
+            autoComplete="name"
+          />
+          <FieldError id="guestbook-name-error" message={errors.name?.message} />
+        </div>
+        <div className="space-y-1">
+          <textarea
+            {...form.register("message")}
+            maxLength={300}
+            rows={4}
+            aria-invalid={isMessageInvalid}
+            aria-describedby={errors.message ? "guestbook-message-error" : undefined}
+            className={cn(
+              "w-full resize-none rounded-md border bg-white px-4 py-3 text-sm leading-6 focus:outline-none",
+              isMessageInvalid
+                ? "border-brand-ink/60 focus:border-brand-ink"
+                : "border-brand-gold/20 focus:border-brand-gold",
+            )}
+            placeholder="축하 메시지를 입력해주세요"
+          />
+          <FieldError id="guestbook-message-error" message={errors.message?.message} />
+        </div>
         <input
           type="text"
           {...form.register("website")}
@@ -196,6 +198,14 @@ export const GuestbookSection = memo(function GuestbookSection({
     </section>
   );
 });
+
+function FieldError({ id, message }: { id: string; message?: string }) {
+  return message ? (
+    <p id={id} role="alert" className="px-1 text-xs text-brand-ink/75">
+      {message}
+    </p>
+  ) : null;
+}
 
 function celebrateGuestbookEntry() {
   const brandColors = ["#C5A059", "#E8D5A8", "#F5F2ED", "#B98D4A"];

@@ -226,12 +226,20 @@ function DeleteConfirmation({
   errorMessage,
 }: DeleteConfirmationProps) {
   const trimmed = target.input.trim();
+  const isTooLong = trimmed.length > 16;
   const isMatched = trimmed.length > 0 && trimmed === target.name;
-  const canSubmit = isMatched && !isSubmitting;
+  const canSubmit = isMatched && !isTooLong && !isSubmitting;
+  const isCompleteMismatch =
+    trimmed.length >= target.name.trim().length && !isMatched;
+  const validationMessage = isTooLong
+    ? "성함은 16자 이내로 입력해주세요."
+    : isCompleteMismatch
+      ? "작성자 성함과 일치하지 않습니다."
+      : null;
 
   return (
-    <div className="space-y-2 rounded-md border border-rose-100 bg-rose-50/60 p-3">
-      <p className="text-[11px] leading-5 text-rose-500/90">
+    <div className="space-y-2 rounded-md border border-brand-gold/15 bg-brand-beige/40 p-3">
+      <p className="text-[11px] leading-5 text-brand-muted">
         삭제하시려면 작성자 이름을 다시 입력해주세요.
       </p>
       <input
@@ -249,12 +257,19 @@ function DeleteConfirmation({
           }
         }}
         placeholder={target.name}
-        maxLength={40}
+        maxLength={16}
         autoFocus
         disabled={isSubmitting}
-        className="w-full rounded border border-rose-200 bg-white px-3 py-2 text-sm placeholder:text-rose-300 focus:border-rose-400 focus:outline-none"
+        className="w-full rounded border border-brand-gold/20 bg-white px-3 py-2 text-sm placeholder:text-brand-muted/50 focus:border-brand-gold focus:outline-none"
         aria-label="작성자 이름 확인"
+        aria-invalid={Boolean(validationMessage)}
+        aria-describedby={validationMessage ? "delete-name-error" : undefined}
       />
+      {validationMessage ? (
+        <p id="delete-name-error" role="alert" className="text-[11px] text-brand-ink/75">
+          {validationMessage}
+        </p>
+      ) : null}
       <div className="flex items-center justify-end gap-2 pt-1">
         <button
           type="button"
@@ -271,15 +286,15 @@ function DeleteConfirmation({
           className={cn(
             "flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-medium transition-colors",
             canSubmit
-              ? "bg-rose-400 text-white hover:bg-rose-500"
-              : "bg-rose-100 text-rose-300",
+              ? "bg-brand-ink text-white hover:bg-brand-ink/90"
+              : "bg-brand-beige text-brand-muted/50",
           )}
         >
           {isSubmitting ? <Loader2 size={12} className="animate-spin" /> : null}
           삭제
         </button>
       </div>
-      {errorMessage ? <p className="text-[11px] text-rose-500">{errorMessage}</p> : null}
+      {errorMessage ? <p className="text-[11px] text-brand-ink/75">{errorMessage}</p> : null}
     </div>
   );
 }
