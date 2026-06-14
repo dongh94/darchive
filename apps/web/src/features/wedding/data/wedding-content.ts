@@ -11,7 +11,7 @@ export const weddingContent = {
         { label: "취향", value: "커피, 산책, 기록" },
         { label: "지연 한정", value: "한없이 다정함" },
       ],
-      imageUrl: "/images/wedding/groom-profile.jpeg",
+      imageUrl: "/images/wedding/groom-profile.webp",
       imageAlt: "김동희 프로필 사진",
     },
     bride: {
@@ -23,7 +23,7 @@ export const weddingContent = {
         { label: "취향", value: "맛있는 것, 예쁜 것, 귀여운 것" },
         { label: "동희 한정", value: "제일 강한 편" },
       ],
-      imageUrl: "/images/wedding/bride-profile.jpeg",
+      imageUrl: "/images/wedding/bride-profile.webp",
       imageAlt: "변지연 프로필 사진",
     },
   },

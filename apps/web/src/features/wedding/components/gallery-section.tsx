@@ -1,15 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+/* eslint-disable @next/next/no-img-element -- The lightbox preloads exact static variants and controls decode timing directly. */
+
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { AnimatePresence, motion } from "motion/react";
-import useEmblaCarousel from "embla-carousel-react";
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, X } from "lucide-react";
 import { weddingContent } from "../data/wedding-content";
 import { SectionHeader } from "./section-header";
 
 const INITIAL_IMAGE_COUNT = 9;
+const SLIDE_TRANSITION_DURATION = 180;
+const galleryImagePromises = new Map<string, Promise<void>>();
+const decodedGalleryImages = new Set<string>();
 
 export function GallerySection() {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -33,12 +37,14 @@ export function GallerySection() {
           <button
             key={image.id}
             type="button"
+            onPointerDown={() => warmGalleryImages(index)}
+            onPointerEnter={() => warmGalleryImages(index)}
             onClick={() => setSelectedImageIndex(index)}
             className="group relative aspect-square overflow-hidden bg-brand-beige/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold"
             aria-label={`${index + 1}번째 사진 크게 보기`}
           >
             <Image
-              src={image.src}
+              src={image.thumbnailSrc}
               alt={image.alt}
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -88,37 +94,60 @@ function GalleryLightbox({
   initialIndex: number;
   onClose: () => void;
 }) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    startIndex: initialIndex,
-    loop: true,
-    duration: 28,
-  });
   const [selectedIndex, setSelectedIndex] = useState(initialIndex);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const pointerStartXRef = useRef(0);
+  const pointerStartTimeRef = useRef(0);
+  const transitionTimeoutRef = useRef<number | null>(null);
+  const imageCount = weddingContent.gallery.length;
 
-  const scrollToPrevious = useCallback(() => {
-    emblaApi?.scrollPrev();
-  }, [emblaApi]);
+  const clearTransitionTimeout = useCallback(() => {
+    if (transitionTimeoutRef.current !== null) {
+      window.clearTimeout(transitionTimeoutRef.current);
+      transitionTimeoutRef.current = null;
+    }
+  }, []);
 
-  const scrollToNext = useCallback(() => {
-    emblaApi?.scrollNext();
-  }, [emblaApi]);
+  const completeTransition = useCallback(
+    (nextIndex: number | null) => {
+      clearTransitionTimeout();
+      transitionTimeoutRef.current = window.setTimeout(() => {
+        setIsAnimating(false);
+
+        if (nextIndex !== null) {
+          setSelectedIndex(nextIndex);
+        }
+
+        setDragOffset(0);
+        transitionTimeoutRef.current = null;
+      }, SLIDE_TRANSITION_DURATION);
+    },
+    [clearTransitionTimeout],
+  );
+
+  const navigate = useCallback(
+    (direction: "previous" | "next") => {
+      if (isAnimating) {
+        return;
+      }
+
+      const directionOffset = direction === "next" ? 1 : -1;
+      const nextIndex = getWrappedIndex(selectedIndex + directionOffset, imageCount);
+      const viewportWidth = viewportRef.current?.clientWidth ?? 410;
+
+      warmGalleryImages(nextIndex);
+      setIsAnimating(true);
+      setDragOffset(direction === "next" ? -viewportWidth : viewportWidth);
+      completeTransition(nextIndex);
+    },
+    [completeTransition, imageCount, isAnimating, selectedIndex],
+  );
 
   useEffect(() => {
-    if (!emblaApi) {
-      return;
-    }
-
-    const updateSelectedIndex = () => {
-      setSelectedIndex(emblaApi.selectedScrollSnap());
-    };
-
-    updateSelectedIndex();
-    emblaApi.on("select", updateSelectedIndex);
-
-    return () => {
-      emblaApi.off("select", updateSelectedIndex);
-    };
-  }, [emblaApi]);
+    warmGalleryImages(selectedIndex);
+  }, [selectedIndex]);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -128,9 +157,9 @@ function GalleryLightbox({
       if (event.key === "Escape") {
         onClose();
       } else if (event.key === "ArrowLeft") {
-        scrollToPrevious();
+        navigate("previous");
       } else if (event.key === "ArrowRight") {
-        scrollToNext();
+        navigate("next");
       }
     };
 
@@ -140,15 +169,69 @@ function GalleryLightbox({
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [onClose, scrollToNext, scrollToPrevious]);
+  }, [navigate, onClose]);
+
+  useEffect(() => clearTransitionTimeout, [clearTransitionTimeout]);
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (isAnimating) {
+      return;
+    }
+
+    event.currentTarget.setPointerCapture(event.pointerId);
+    pointerStartXRef.current = event.clientX;
+    pointerStartTimeRef.current = performance.now();
+  };
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!event.currentTarget.hasPointerCapture(event.pointerId) || isAnimating) {
+      return;
+    }
+
+    const viewportWidth = viewportRef.current?.clientWidth ?? 410;
+    const nextOffset = event.clientX - pointerStartXRef.current;
+    setDragOffset(Math.max(-viewportWidth, Math.min(viewportWidth, nextOffset)));
+  };
+
+  const handlePointerEnd = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!event.currentTarget.hasPointerCapture(event.pointerId) || isAnimating) {
+      return;
+    }
+
+    event.currentTarget.releasePointerCapture(event.pointerId);
+    const elapsedTime = Math.max(performance.now() - pointerStartTimeRef.current, 1);
+    const velocity = dragOffset / elapsedTime;
+    const viewportWidth = viewportRef.current?.clientWidth ?? 410;
+    const shouldNavigate =
+      Math.abs(dragOffset) > viewportWidth * 0.14 || Math.abs(velocity) > 0.45;
+
+    if (shouldNavigate && dragOffset !== 0) {
+      navigate(dragOffset < 0 ? "next" : "previous");
+      return;
+    }
+
+    setIsAnimating(true);
+    setDragOffset(0);
+    completeTransition(null);
+  };
+
+  const slides = [-1, 0, 1].map((offset) => {
+    const index = getWrappedIndex(selectedIndex + offset, imageCount);
+
+    return {
+      image: weddingContent.gallery[index],
+      index,
+      isCurrent: offset === 0,
+    };
+  });
 
   return createPortal(
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 p-3 backdrop-blur-sm sm:p-6"
+      transition={{ duration: 0.14 }}
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/85 p-3 sm:p-6"
     >
       <button
         type="button"
@@ -159,10 +242,10 @@ function GalleryLightbox({
       />
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.94, y: 18 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.96, y: 12 }}
-        transition={{ duration: 0.28, ease: "easeOut" }}
+        initial={{ opacity: 0, scale: 0.985 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.99 }}
+        transition={{ duration: 0.16, ease: "easeOut" }}
         className="relative z-10 flex max-h-[calc(100dvh-24px)] w-full max-w-[410px] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
         role="dialog"
         aria-modal="true"
@@ -196,45 +279,43 @@ function GalleryLightbox({
           </div>
         </header>
 
-        <div className="relative bg-brand-beige">
+        <div className="relative bg-brand-beige/70">
           <div
-            ref={emblaRef}
-            className="aspect-[4/5] max-h-[calc(100dvh-136px)] cursor-grab overflow-hidden active:cursor-grabbing"
+            ref={viewportRef}
+            className="aspect-[3/4] max-h-[calc(100dvh-136px)] cursor-grab touch-pan-y overflow-hidden active:cursor-grabbing"
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerEnd}
+            onPointerCancel={handlePointerEnd}
           >
-            <div className="flex h-full touch-pan-y">
-              {weddingContent.gallery.map((image, index) => (
+            <div
+              className="flex h-full w-full will-change-transform"
+              style={{
+                transform: `translate3d(calc(-100% + ${dragOffset}px), 0, 0)`,
+                transition: isAnimating
+                  ? `transform ${SLIDE_TRANSITION_DURATION}ms cubic-bezier(0.22, 1, 0.36, 1)`
+                  : "none",
+              }}
+            >
+              {slides.map(({ image, index, isCurrent }) => (
                 <div
                   key={image.id}
-                  className="relative min-w-0 flex-[0_0_100%]"
+                  className="relative h-full w-full shrink-0 bg-brand-beige/70"
                   role="group"
                   aria-roledescription="slide"
                   aria-label={`${index + 1} / ${weddingContent.gallery.length}`}
                 >
-                  <Image
-                    src={image.src}
-                    alt=""
-                    fill
-                    className="pointer-events-none scale-110 select-none object-cover opacity-35 blur-2xl"
-                    sizes="(max-width: 440px) calc(100vw - 24px), 410px"
-                    aria-hidden="true"
-                    draggable={false}
-                  />
-                  <div className="absolute inset-0 bg-white/20" />
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    className="pointer-events-none select-none object-contain drop-shadow-[0_8px_24px_rgba(44,44,44,0.16)]"
-                    sizes="(max-width: 440px) calc(100vw - 24px), 410px"
-                    draggable={false}
-                  />
+                  <LightboxImage image={image} isCurrent={isCurrent} />
                 </div>
               ))}
             </div>
           </div>
 
-          <LightboxNavigationButton direction="previous" onClick={scrollToPrevious} />
-          <LightboxNavigationButton direction="next" onClick={scrollToNext} />
+          <LightboxNavigationButton
+            direction="previous"
+            onClick={() => navigate("previous")}
+          />
+          <LightboxNavigationButton direction="next" onClick={() => navigate("next")} />
         </div>
 
         <footer className="flex h-14 shrink-0 items-center justify-between px-4">
@@ -258,6 +339,111 @@ function GalleryLightbox({
   );
 }
 
+function LightboxImage({
+  image,
+  isCurrent,
+}: {
+  image: (typeof weddingContent.gallery)[number];
+  isCurrent: boolean;
+}) {
+  const [isDecoded, setIsDecoded] = useState(() => decodedGalleryImages.has(image.src));
+
+  useEffect(() => {
+    let isMounted = true;
+
+    void preloadGalleryImage(image.src).then(() => {
+      if (isMounted) {
+        setIsDecoded(true);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [image.src]);
+
+  return (
+    <>
+      <img
+        src={image.thumbnailSrc}
+        alt=""
+        className={getLightboxImageClassName(image)}
+        aria-hidden="true"
+        draggable={false}
+      />
+      <img
+        src={image.src}
+        alt={image.alt}
+        width={image.width}
+        height={image.height}
+        loading="eager"
+        decoding="async"
+        fetchPriority={isCurrent ? "high" : "auto"}
+        className={`${getLightboxImageClassName(image)} transition-opacity duration-100 ${
+          isDecoded ? "opacity-100" : "opacity-0"
+        }`}
+        draggable={false}
+      />
+    </>
+  );
+}
+
+function getLightboxImageClassName(
+  image: (typeof weddingContent.gallery)[number],
+) {
+  const isPortrait = image.height > image.width;
+
+  return `pointer-events-none absolute inset-0 h-full w-full select-none ${
+    isPortrait ? "object-cover" : "object-contain"
+  }`;
+}
+
+function getWrappedIndex(index: number, imageCount: number) {
+  return (index + imageCount) % imageCount;
+}
+
+function warmGalleryImages(selectedIndex: number) {
+  const imageCount = weddingContent.gallery.length;
+
+  for (let offset = -2; offset <= 2; offset += 1) {
+    const imageIndex = getWrappedIndex(selectedIndex + offset, imageCount);
+    void preloadGalleryImage(weddingContent.gallery[imageIndex].src);
+  }
+}
+
+function preloadGalleryImage(src: string) {
+  const cachedPromise = galleryImagePromises.get(src);
+
+  if (cachedPromise) {
+    return cachedPromise;
+  }
+
+  const imagePromise = new Promise<void>((resolve) => {
+    const image = new window.Image();
+    image.decoding = "async";
+    image.fetchPriority = "high";
+    image.src = src;
+
+    const markDecoded = () => {
+      decodedGalleryImages.add(src);
+      resolve();
+    };
+
+    if (image.complete) {
+      void image.decode().then(markDecoded, markDecoded);
+      return;
+    }
+
+    image.onload = () => {
+      void image.decode().then(markDecoded, markDecoded);
+    };
+    image.onerror = () => resolve();
+  });
+
+  galleryImagePromises.set(src, imagePromise);
+  return imagePromise;
+}
+
 function LightboxNavigationButton({
   direction,
   onClick,
@@ -272,7 +458,7 @@ function LightboxNavigationButton({
     <button
       type="button"
       onClick={onClick}
-      className={`absolute top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/35 text-white backdrop-blur-sm transition-all hover:bg-black/55 active:scale-95 ${
+      className={`absolute top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-white transition-colors hover:bg-black/65 active:scale-95 ${
         isPrevious ? "left-2.5" : "right-2.5"
       }`}
       aria-label={isPrevious ? "이전 사진" : "다음 사진"}

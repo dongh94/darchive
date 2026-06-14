@@ -1,4 +1,5 @@
-import { mkdir, readdir, rm, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
@@ -9,92 +10,134 @@ const originalsDirectory = path.join(
   repositoryRoot,
   "private-assets/wedding/originals",
 );
-const outputDirectory = path.join(
+const gallerySourceDirectory = path.join(originalsDirectory, "fix");
+const fullOutputDirectory = path.join(
   repositoryRoot,
   "apps/web/public/images/wedding/gallery/full",
+);
+const thumbnailOutputDirectory = path.join(
+  repositoryRoot,
+  "apps/web/public/images/wedding/gallery/thumbnails",
 );
 const galleryDataPath = path.join(
   repositoryRoot,
   "apps/web/src/features/wedding/data/wedding-gallery.ts",
 );
+const profileSourceDirectory = path.join(originalsDirectory, "profile");
+const profileOutputDirectory = path.join(
+  repositoryRoot,
+  "apps/web/public/images/wedding",
+);
+const profileImages = [
+  {
+    sourceFileName: "Jiyeon.jpeg",
+    outputFileName: "bride-profile.webp",
+  },
+  {
+    sourceFileName: "donghee.jpeg",
+    outputFileName: "groom-profile.webp",
+  },
+];
 
-const imageExtensionPattern = /\.(jpe?g)$/i;
-const maximumDimension = 1200;
-const webpQuality = 80;
+const imageExtensionPattern = /\.(jpe?g|png|webp)$/i;
+const fullMaximumDimension = 2048;
+const fullWebpQuality = 92;
+const thumbnailMaximumDimension = 420;
+const thumbnailWebpQuality = 72;
+const profileWidth = 900;
+const profileHeight = 1200;
+const profileWebpQuality = 82;
 
-const chapterEntries = await readdir(originalsDirectory, {
-  withFileTypes: true,
-});
-const chapterNames = chapterEntries
-  .filter((entry) => entry.isDirectory())
-  .map((entry) => entry.name)
+const sourceImages = (await readdir(gallerySourceDirectory))
+  .filter((fileName) => imageExtensionPattern.test(fileName))
   .sort((left, right) =>
     left.localeCompare(right, undefined, { numeric: true }),
-  );
-
-const sourceImages = [];
-
-for (const chapterName of chapterNames) {
-  const chapterDirectory = path.join(originalsDirectory, chapterName);
-  const fileNames = (await readdir(chapterDirectory))
-    .filter((fileName) => imageExtensionPattern.test(fileName))
-    .sort((left, right) =>
-      left.localeCompare(right, undefined, { numeric: true }),
-    );
-
-  for (const fileName of fileNames) {
-    sourceImages.push(path.join(chapterDirectory, fileName));
-  }
-}
+  )
+  .map((fileName) => path.join(gallerySourceDirectory, fileName));
 
 if (sourceImages.length === 0) {
-  throw new Error(`No JPEG images found in ${originalsDirectory}`);
+  throw new Error(`No gallery images found in ${gallerySourceDirectory}`);
 }
 
-await mkdir(outputDirectory, { recursive: true });
+await Promise.all([
+  mkdir(fullOutputDirectory, { recursive: true }),
+  mkdir(thumbnailOutputDirectory, { recursive: true }),
+  mkdir(profileOutputDirectory, { recursive: true }),
+]);
 
-const existingOutputs = await readdir(outputDirectory);
-await Promise.all(
-  existingOutputs
-    .filter((fileName) => fileName.endsWith(".webp"))
-    .map((fileName) => rm(path.join(outputDirectory, fileName))),
-);
+for (const outputDirectory of [
+  fullOutputDirectory,
+  thumbnailOutputDirectory,
+]) {
+  const existingOutputs = await readdir(outputDirectory);
+  await Promise.all(
+    existingOutputs
+      .filter((fileName) => fileName.endsWith(".webp"))
+      .map((fileName) => rm(path.join(outputDirectory, fileName))),
+  );
+}
 
 const galleryImages = [];
-let totalOutputBytes = 0;
+let totalFullBytes = 0;
+let totalThumbnailBytes = 0;
 
 for (const [index, sourcePath] of sourceImages.entries()) {
   const imageNumber = index + 1;
   const paddedImageNumber = String(imageNumber).padStart(2, "0");
-  const fileName = `gallery-${paddedImageNumber}.webp`;
-  const outputPath = path.join(outputDirectory, fileName);
+  const sourceHash = createHash("sha256")
+    .update(await readFile(sourcePath))
+    .update(
+      `full:${fullMaximumDimension}:${fullWebpQuality};thumbnail:${thumbnailMaximumDimension}:${thumbnailWebpQuality}`,
+    )
+    .digest("hex")
+    .slice(0, 10);
+  const fileName = `gallery-${paddedImageNumber}-${sourceHash}.webp`;
+  const fullOutputPath = path.join(fullOutputDirectory, fileName);
+  const thumbnailOutputPath = path.join(thumbnailOutputDirectory, fileName);
 
-  const result = await sharp(sourcePath)
+  const fullResult = await sharp(sourcePath)
     .rotate()
     .resize({
-      width: maximumDimension,
-      height: maximumDimension,
+      width: fullMaximumDimension,
+      height: fullMaximumDimension,
       fit: "inside",
       withoutEnlargement: true,
     })
     .webp({
-      quality: webpQuality,
+      quality: fullWebpQuality,
       effort: 5,
       smartSubsample: true,
     })
-    .toFile(outputPath);
+    .toFile(fullOutputPath);
 
-  totalOutputBytes += result.size;
+  const thumbnailResult = await sharp(sourcePath)
+    .rotate()
+    .resize({
+      width: thumbnailMaximumDimension,
+      height: thumbnailMaximumDimension,
+      fit: "inside",
+      withoutEnlargement: true,
+    })
+    .webp({
+      quality: thumbnailWebpQuality,
+      effort: 5,
+      smartSubsample: true,
+    })
+    .toFile(thumbnailOutputPath);
+
+  totalFullBytes += fullResult.size;
+  totalThumbnailBytes += thumbnailResult.size;
   galleryImages.push({
     id: `wedding-gallery-${paddedImageNumber}`,
     src: `/images/wedding/gallery/full/${fileName}`,
+    thumbnailSrc: `/images/wedding/gallery/thumbnails/${fileName}`,
     alt: `웨딩 갤러리 사진 ${imageNumber}`,
-    width: result.width,
-    height: result.height,
+    width: fullResult.width,
+    height: fullResult.height,
   });
 
   console.log(
-    `${paddedImageNumber}/${sourceImages.length} ${path.relative(repositoryRoot, sourcePath)} -> ${Math.round(result.size / 1024)}KB`,
+    `${paddedImageNumber}/${sourceImages.length} ${path.relative(repositoryRoot, sourcePath)} -> full ${Math.round(fullResult.size / 1024)}KB, thumbnail ${Math.round(thumbnailResult.size / 1024)}KB`,
   );
 }
 
@@ -105,6 +148,37 @@ export const weddingGallery = ${JSON.stringify(galleryImages, null, 2)} as const
 
 await writeFile(galleryDataPath, galleryDataSource, "utf8");
 
+for (const profileImage of profileImages) {
+  const sourcePath = path.join(
+    profileSourceDirectory,
+    profileImage.sourceFileName,
+  );
+  const outputPath = path.join(
+    profileOutputDirectory,
+    profileImage.outputFileName,
+  );
+
+  const profileResult = await sharp(sourcePath)
+    .rotate()
+    .resize({
+      width: profileWidth,
+      height: profileHeight,
+      fit: "cover",
+      position: "centre",
+      withoutEnlargement: true,
+    })
+    .webp({
+      quality: profileWebpQuality,
+      effort: 5,
+      smartSubsample: true,
+    })
+    .toFile(outputPath);
+
+  console.log(
+    `${profileImage.sourceFileName} -> ${profileImage.outputFileName} ${Math.round(profileResult.size / 1024)}KB`,
+  );
+}
+
 console.log(
-  `Generated ${sourceImages.length} images (${(totalOutputBytes / 1024 / 1024).toFixed(2)}MB total).`,
+  `Generated ${sourceImages.length} full images (${(totalFullBytes / 1024 / 1024).toFixed(2)}MB) and thumbnails (${(totalThumbnailBytes / 1024 / 1024).toFixed(2)}MB).`,
 );
