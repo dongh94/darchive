@@ -64,14 +64,16 @@ export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        transition={{ duration: 0.16, ease: "easeOut" }}
         onClick={onClose}
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/45"
         aria-label="참석 전달 배경 닫기"
       />
       <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 8 }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
         className="relative max-h-[calc(100dvh-2rem)] w-full max-w-[360px] overflow-y-auto overscroll-contain rounded-xl bg-white shadow-2xl"
       >
         <div className="space-y-5 p-6 sm:p-7">

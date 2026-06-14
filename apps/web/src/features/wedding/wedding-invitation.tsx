@@ -36,7 +36,18 @@ export function WeddingInvitation() {
     window.setTimeout(() => setCopiedAccount(null), 2000);
   }, []);
 
-  const handleRsvpSubmit = () => {
+  const openRsvp = useCallback(() => setIsRsvpOpen(true), []);
+  const closeRsvp = useCallback(() => setIsRsvpOpen(false), []);
+  const openGuestbookViewer = useCallback(
+    () => setIsGuestbookViewerOpen(true),
+    [],
+  );
+  const closeGuestbookViewer = useCallback(
+    () => setIsGuestbookViewerOpen(false),
+    [],
+  );
+
+  const handleRsvpSubmit = useCallback(() => {
     confetti({
       particleCount: 100,
       spread: 70,
@@ -44,11 +55,11 @@ export function WeddingInvitation() {
       colors: ["#C5A059", "#F5F2ED", "#2C2C2C"],
     });
     window.setTimeout(() => setIsRsvpOpen(false), 1500);
-  };
+  }, []);
 
-  const handleShare = () => {
+  const handleShare = useCallback(() => {
     void shareWeddingInvitation(copyToClipboard);
-  };
+  }, [copyToClipboard]);
 
   return (
     <WeddingQueryProvider>
@@ -74,9 +85,9 @@ export function WeddingInvitation() {
         <Divider />
         <GiftSection copiedAccount={copiedAccount} copyToClipboard={copyToClipboard} />
         <Divider />
-        <GuestbookSection onOpenViewer={() => setIsGuestbookViewerOpen(true)} />
+        <GuestbookSection onOpenViewer={openGuestbookViewer} />
         <Divider />
-        <ClosingSection addToCalendar={downloadWeddingCalendar} onRsvp={() => setIsRsvpOpen(true)} onShare={handleShare} />
+        <ClosingSection addToCalendar={downloadWeddingCalendar} onRsvp={openRsvp} onShare={handleShare} />
 
         <footer className="border-t border-brand-gold/5 bg-brand-beige/20 py-12 text-center">
           <p className="text-[10px] uppercase tracking-[0.4em] text-brand-gold opacity-60">
@@ -86,8 +97,8 @@ export function WeddingInvitation() {
         </div>
 
         <AnimatePresence>
-          {isRsvpOpen ? <RsvpDialog onClose={() => setIsRsvpOpen(false)} onSubmitted={handleRsvpSubmit} /> : null}
-          {isGuestbookViewerOpen ? <GuestbookViewerDialog onClose={() => setIsGuestbookViewerOpen(false)} /> : null}
+          {isRsvpOpen ? <RsvpDialog onClose={closeRsvp} onSubmitted={handleRsvpSubmit} /> : null}
+          {isGuestbookViewerOpen ? <GuestbookViewerDialog onClose={closeGuestbookViewer} /> : null}
         </AnimatePresence>
       </div>
     </WeddingQueryProvider>
