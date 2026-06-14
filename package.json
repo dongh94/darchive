@@ -11,9 +11,11 @@
     "dev": "pnpm db:generate && pnpm --filter @darchive/web dev",
     "lint": "pnpm --filter @darchive/web lint",
     "start": "pnpm --filter @darchive/web start",
-    "typecheck": "pnpm db:generate && pnpm --filter @darchive/web typecheck"
+    "typecheck": "pnpm db:generate && pnpm --filter @darchive/web typecheck",
+    "wedding:images": "node scripts/process-wedding-images.mjs"
   },
   "devDependencies": {
-    "prisma": "^7.8.0"
+    "prisma": "^7.8.0",
+    "sharp": "0.34.5"
   }
 }

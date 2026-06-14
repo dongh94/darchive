@@ -1,3 +1,5 @@
+import { weddingGallery } from "./wedding-gallery";
+
 export const weddingContent = {
   couple: {
     groom: {
@@ -42,11 +44,7 @@ export const weddingContent = {
     mapImageUrl: "https://picsum.photos/seed/map/600/600?grayscale",
     transitLines: ["1호선, 서해선 소사역 1번출구 건너편 좌측(70m)", "소사어울마당삼거리 · MJ 컨벤션 정류장 하차"],
   },
-  gallery: [1, 2, 3, 4, 5, 6].map((item) => ({
-    id: `wedding-gallery-${item}`,
-    src: `https://picsum.photos/seed/wedding${item}/600/800`,
-    alt: `웨딩 갤러리 사진 ${item}`,
-  })),
+  gallery: weddingGallery,
   giftAccounts: [
     {
       side: "Groom's Side",

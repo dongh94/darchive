@@ -243,12 +243,9 @@ function DrawnWeddingTitle({ isIntroVisible }: { isIntroVisible: boolean }) {
 }
 
 function playShutterClick() {
-  try {
-    const audio = new Audio("/audio/polaroid-shutter.mp3");
-    audio.volume = 0.55;
+  const audio = new Audio("/audio/polaroid-shutter.mp3");
+  audio.volume = 0.55;
 
-    void audio.play();
-  } catch {
-    // Browsers may block autoplayed audio before user interaction.
-  }
+  // Browsers may reject media playback before the first user interaction.
+  void audio.play().catch(() => undefined);
 }
