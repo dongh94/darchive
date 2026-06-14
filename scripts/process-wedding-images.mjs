@@ -84,6 +84,7 @@ let totalThumbnailBytes = 0;
 for (const [index, sourcePath] of sourceImages.entries()) {
   const imageNumber = index + 1;
   const paddedImageNumber = String(imageNumber).padStart(2, "0");
+  const sourceFileName = path.basename(sourcePath);
   const sourceHash = createHash("sha256")
     .update(await readFile(sourcePath))
     .update(
@@ -129,6 +130,7 @@ for (const [index, sourcePath] of sourceImages.entries()) {
   totalThumbnailBytes += thumbnailResult.size;
   galleryImages.push({
     id: `wedding-gallery-${paddedImageNumber}`,
+    sourceFileName,
     src: `/images/wedding/gallery/full/${fileName}`,
     thumbnailSrc: `/images/wedding/gallery/thumbnails/${fileName}`,
     alt: `웨딩 갤러리 사진 ${imageNumber}`,
