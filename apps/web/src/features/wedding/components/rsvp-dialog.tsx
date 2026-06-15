@@ -6,8 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "motion/react";
 import { Loader2, X } from "lucide-react";
 import { rsvpInputSchema, type RsvpInput } from "@darchive/api/schemas";
+import { cn } from "@/shared/lib/cn";
 import { trpc } from "@/shared/lib/trpc";
-import { cn } from "../lib/utils";
 import { useBodyScrollLock } from "../lib/use-body-scroll-lock";
 
 type RsvpDialogProps = {

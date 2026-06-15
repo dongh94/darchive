@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Trash2 } from "lucide-react";
 import type { GuestbookEntry } from "@darchive/api/schemas";
-import { cn } from "../lib/utils";
+import { cn } from "@/shared/lib/cn";
 
 type GuestbookEntryCardProps = {
   entry: GuestbookEntry;

@@ -2,8 +2,8 @@
 
 import { Heart } from "lucide-react";
 import { motion } from "motion/react";
+import { cn } from "@/shared/lib/cn";
 import { weddingContent } from "../data/wedding-content";
-import { cn } from "../lib/utils";
 
 type CalendarSectionProps = {
   dDay: number;
