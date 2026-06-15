@@ -328,7 +328,7 @@ function GalleryLightbox({
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.99 }}
         transition={{ duration: 0.16, ease: "easeOut" }}
-        className="relative z-10 flex max-h-[calc(100dvh-24px)] w-full max-w-[410px] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+        className="relative z-10 flex max-h-[calc(100dvh-24px)] w-[min(410px,calc(100vw-24px),calc((100dvh-136px)*0.75))] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
         role="dialog"
         aria-modal="true"
         aria-label="웨딩 사진 상세보기"
@@ -364,7 +364,7 @@ function GalleryLightbox({
         <div className="relative bg-brand-beige/70">
           <div
             ref={viewportRef}
-            className="aspect-[3/4] max-h-[calc(100dvh-136px)] cursor-grab touch-pan-y overflow-hidden overscroll-contain active:cursor-grabbing"
+            className="aspect-[3/4] cursor-grab touch-pan-y overflow-hidden overscroll-contain active:cursor-grabbing"
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerEnd}
