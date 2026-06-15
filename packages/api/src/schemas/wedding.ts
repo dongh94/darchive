@@ -2,13 +2,6 @@ import { z } from "zod";
 
 const normalizeText = (value: string) => value.trim().replace(/\s+/g, " ");
 
-const optionalText = (maxLength: number, error: string) =>
-  z
-    .union([z.string(), z.null(), z.undefined()])
-    .transform((value) => (typeof value === "string" ? normalizeText(value) : ""))
-    .pipe(z.string().max(maxLength, { error }))
-    .transform((value) => (value ? value : null));
-
 const nameSchema = z
   .string()
   .transform(normalizeText)
@@ -47,6 +40,13 @@ export const attendanceSchema = z.enum(["yes", "no"], {
   error: (issue) => (issue.input === undefined ? "참석 여부를 선택해주세요." : "참석 여부를 확인해주세요."),
 });
 
+export const afterPartyAttendanceSchema = z.enum(["yes", "no", "undecided"], {
+  error: (issue) =>
+    issue.input === undefined
+      ? "뒤풀이 참석 여부를 선택해주세요."
+      : "뒤풀이 참석 여부를 확인해주세요.",
+});
+
 export const guestbookEntrySchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -73,20 +73,57 @@ export const guestbookDeleteInputSchema = z.object({
   name: nameSchema,
 });
 
-export const rsvpInputSchema = z.object({
-  name: nameSchema,
-  attendance: attendanceSchema,
-  guestCount: z.coerce
-    .number({ error: "인원을 확인해주세요." })
-    .int({ error: "인원을 확인해주세요." })
-    .min(1, { error: "인원을 확인해주세요." })
-    .max(4, { error: "인원을 확인해주세요." }),
-  phone: optionalPhoneSchema,
-  message: optionalText(200, "메시지는 200자 이내로 입력해주세요."),
-  website: honeypotSchema,
-});
+export const rsvpInputSchema = z
+  .object({
+    name: nameSchema,
+    attendance: attendanceSchema,
+    afterPartyAttendance: afterPartyAttendanceSchema.nullable().optional(),
+    afterPartyGuestCount: z
+      .number({ error: "뒤풀이 참석 인원을 확인해주세요." })
+      .int({ error: "뒤풀이 참석 인원을 확인해주세요." })
+      .min(1, { error: "뒤풀이 참석 인원을 확인해주세요." })
+      .max(4, { error: "뒤풀이 참석 인원을 확인해주세요." })
+      .nullable()
+      .optional(),
+    phone: optionalPhoneSchema,
+    website: honeypotSchema,
+  })
+  .superRefine((value, context) => {
+    if (value.attendance === "yes" && !value.afterPartyAttendance) {
+      context.addIssue({
+        code: "custom",
+        path: ["afterPartyAttendance"],
+        message: "뒤풀이 참석 여부를 선택해주세요.",
+      });
+    }
+
+    if (
+      value.attendance === "yes" &&
+      value.afterPartyAttendance === "yes" &&
+      value.afterPartyGuestCount == null
+    ) {
+      context.addIssue({
+        code: "custom",
+        path: ["afterPartyGuestCount"],
+        message: "뒤풀이 참석 인원을 선택해주세요.",
+      });
+    }
+
+    if (
+      value.attendance === "yes" &&
+      value.afterPartyAttendance === "yes" &&
+      !value.phone
+    ) {
+      context.addIssue({
+        code: "custom",
+        path: ["phone"],
+        message: "뒤풀이 안내를 받을 연락처를 입력해주세요.",
+      });
+    }
+  });
 
 export type Attendance = z.infer<typeof attendanceSchema>;
+export type AfterPartyAttendance = z.infer<typeof afterPartyAttendanceSchema>;
 export type GuestbookEntry = z.infer<typeof guestbookEntrySchema>;
 export type GuestbookCreateInput = z.input<typeof guestbookCreateInputSchema>;
 export type GuestbookDeleteInput = z.input<typeof guestbookDeleteInputSchema>;

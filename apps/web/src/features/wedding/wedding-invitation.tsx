@@ -8,6 +8,7 @@ import { ClosingSection } from "./components/closing-section";
 import { CoupleProfileSection } from "./components/couple-profile-section";
 import { Divider } from "./components/divider";
 import { FloatingHearts } from "./components/floating-hearts";
+import { FloatingRsvpButton } from "./components/floating-rsvp-button";
 import { GallerySection } from "./components/gallery-section";
 import { GuestbookSection } from "./components/guestbook-section";
 import { GuestbookViewerDialog } from "./components/guestbook-viewer-dialog";
@@ -109,6 +110,9 @@ export function WeddingInvitation() {
         </div>
 
         <AnimatePresence>
+          {!isRsvpOpen && !isGuestbookViewerOpen && !isRsvpSuccessVisible ? (
+            <FloatingRsvpButton onClick={openRsvp} />
+          ) : null}
           {isRsvpOpen ? <RsvpDialog onClose={closeRsvp} onSubmitted={handleRsvpSubmit} /> : null}
           {isGuestbookViewerOpen ? <GuestbookViewerDialog onClose={closeGuestbookViewer} /> : null}
           {isRsvpSuccessVisible ? (

@@ -33,4 +33,7 @@ export function getPrisma() {
 }
 
 export type { Prisma } from "./generated/prisma/client";
-export { WeddingAttendance } from "./generated/prisma/enums";
+export {
+  AfterPartyAttendance,
+  WeddingAttendance,
+} from "./generated/prisma/enums";

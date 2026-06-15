@@ -1,5 +1,9 @@
 import { TRPCError } from "@trpc/server";
-import { getPrisma, WeddingAttendance } from "@darchive/db";
+import {
+  AfterPartyAttendance,
+  getPrisma,
+  WeddingAttendance,
+} from "@darchive/db";
 import { publicProcedure, router } from "../trpc";
 import { isRateLimited } from "../lib/rate-limit";
 import {
@@ -143,9 +147,19 @@ export const weddingRouter = router({
           name: input.name,
           attendance:
             input.attendance === "yes" ? WeddingAttendance.YES : WeddingAttendance.NO,
-          guestCount: input.guestCount,
+          afterPartyAttendance:
+            input.attendance === "no"
+              ? AfterPartyAttendance.NO
+              : input.afterPartyAttendance === "yes"
+                ? AfterPartyAttendance.YES
+                : input.afterPartyAttendance === "no"
+                  ? AfterPartyAttendance.NO
+                  : AfterPartyAttendance.UNDECIDED,
+          afterPartyGuestCount:
+            input.attendance === "yes" && input.afterPartyAttendance === "yes"
+              ? input.afterPartyGuestCount
+              : null,
           phone: input.phone,
-          message: input.message,
         },
         select: { id: true },
       });
