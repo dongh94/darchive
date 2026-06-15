@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "motion/react";
 import { Loader2, X } from "lucide-react";
@@ -28,11 +28,11 @@ export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
     reValidateMode: "onChange",
     shouldFocusError: false,
     defaultValues: {
-      name: "",
       attendance: "yes",
-      guestCount: 1,
+      afterPartyAttendance: null,
+      afterPartyGuestCount: null,
+      name: "",
       phone: "",
-      message: "",
       website: "",
     },
   });
@@ -49,7 +49,49 @@ export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
     (submitRsvp.isSuccess ? "참석 의사가 전달되었습니다." : null);
   const isNameInvalid = Boolean(errors.name);
   const isPhoneInvalid = Boolean(errors.phone);
-  const isMessageInvalid = Boolean(errors.message);
+  const attendance = useWatch({
+    control: form.control,
+    name: "attendance",
+  });
+  const afterPartyAttendance = useWatch({
+    control: form.control,
+    name: "afterPartyAttendance",
+  });
+
+  const setWeddingAttendance = (value: RsvpInput["attendance"]) => {
+    form.setValue("attendance", value, {
+      shouldDirty: true,
+      shouldValidate: form.formState.isSubmitted,
+    });
+
+    if (value === "no") {
+      form.setValue("afterPartyAttendance", null, {
+        shouldDirty: true,
+        shouldValidate: form.formState.isSubmitted,
+      });
+      form.setValue("afterPartyGuestCount", null, {
+        shouldDirty: true,
+        shouldValidate: form.formState.isSubmitted,
+      });
+    }
+  };
+
+  const setAfterPartyAttendance = (
+    value: NonNullable<RsvpInput["afterPartyAttendance"]>,
+  ) => {
+    form.setValue("afterPartyAttendance", value, {
+      shouldDirty: true,
+      shouldValidate: form.formState.isSubmitted,
+    });
+    form.setValue(
+      "afterPartyGuestCount",
+      value === "yes" ? (form.getValues("afterPartyGuestCount") ?? 1) : null,
+      {
+        shouldDirty: true,
+        shouldValidate: form.formState.isSubmitted,
+      },
+    );
+  };
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center overscroll-none px-5 py-4">
@@ -72,7 +114,7 @@ export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
       >
         <div className="space-y-5 p-6 sm:p-7">
           <div className="flex items-center justify-between">
-            <h3 className="font-serif text-lg">참석 의사 전달</h3>
+            <h3 className="font-serif text-lg font-bold">참석 의사 전달</h3>
             <button
               type="button"
               onClick={onClose}
@@ -84,8 +126,120 @@ export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
           </div>
 
           <form onSubmit={onSubmit} className="space-y-3.5">
+            <div className="space-y-1">
+              <p className="ml-1 text-xs font-bold tracking-wider text-brand-ink">
+                참석 여부
+              </p>
+              <Controller
+                control={form.control}
+                name="attendance"
+                render={({ field }) => (
+                  <div role="radiogroup" aria-label="참석 여부" className="grid grid-cols-2 gap-2">
+                    <AttendanceButton
+                      isActive={field.value === "yes"}
+                      onClick={() => setWeddingAttendance("yes")}
+                    >
+                      참석
+                    </AttendanceButton>
+                    <AttendanceButton
+                      isActive={field.value === "no"}
+                      onClick={() => setWeddingAttendance("no")}
+                      activeClassName="bg-brand-ink border-brand-ink"
+                    >
+                      불참
+                    </AttendanceButton>
+                  </div>
+                )}
+              />
+            </div>
+
+            {attendance === "yes" ? (
+              <div className="space-y-3 rounded-lg border border-brand-gold/15 bg-brand-beige/20 p-3.5">
+                <div className="space-y-1">
+                  <p className="text-xs font-bold tracking-wider text-brand-ink">
+                    뒤풀이 참석 여부
+                  </p>
+                  <p className="text-[11px] leading-5 text-brand-muted">
+                    결혼식 이후 뒤풀이 참석 여부를 알려주세요.
+                  </p>
+                </div>
+                <Controller
+                  control={form.control}
+                  name="afterPartyAttendance"
+                  render={({ field }) => (
+                    <div
+                      role="radiogroup"
+                      aria-label="뒤풀이 참석 여부"
+                      className="grid grid-cols-3 gap-2"
+                    >
+                      <AttendanceButton
+                        isActive={field.value === "yes"}
+                        onClick={() => setAfterPartyAttendance("yes")}
+                      >
+                        참석
+                      </AttendanceButton>
+                      <AttendanceButton
+                        isActive={field.value === "no"}
+                        onClick={() => setAfterPartyAttendance("no")}
+                        activeClassName="bg-brand-ink border-brand-ink"
+                      >
+                        불참
+                      </AttendanceButton>
+                      <AttendanceButton
+                        isActive={field.value === "undecided"}
+                        onClick={() => setAfterPartyAttendance("undecided")}
+                        activeClassName="bg-brand-muted border-brand-muted"
+                      >
+                        미정
+                      </AttendanceButton>
+                    </div>
+                  )}
+                />
+                <FieldError
+                  id="rsvp-after-party-attendance-error"
+                  message={errors.afterPartyAttendance?.message}
+                />
+
+                {afterPartyAttendance === "yes" ? (
+                  <label className="block space-y-1">
+                    <span className="text-xs font-bold tracking-wider text-brand-ink">
+                      뒤풀이 참석 인원
+                    </span>
+                    <select
+                      {...form.register("afterPartyGuestCount", {
+                        setValueAs: (value) => Number(value),
+                      })}
+                      aria-invalid={Boolean(errors.afterPartyGuestCount)}
+                      aria-describedby={
+                        errors.afterPartyGuestCount
+                          ? "rsvp-after-party-guest-count-error"
+                          : undefined
+                      }
+                      className={cn(
+                        "w-full appearance-none rounded-md border bg-white px-3.5 py-2.5 text-sm focus:outline-none",
+                        errors.afterPartyGuestCount
+                          ? "border-brand-ink/60 focus:border-brand-ink"
+                          : "border-brand-gold/20 focus:border-brand-gold",
+                      )}
+                    >
+                      <option value={1}>본인 포함 1명</option>
+                      <option value={2}>2명</option>
+                      <option value={3}>3명</option>
+                      <option value={4}>4명 이상</option>
+                    </select>
+                    <FieldError
+                      id="rsvp-after-party-guest-count-error"
+                      message={errors.afterPartyGuestCount?.message}
+                    />
+                  </label>
+                ) : null}
+              </div>
+            ) : null}
+
             <label className="block space-y-1">
-              <span className="ml-1 text-[10px] tracking-widest text-brand-gold">성함</span>
+              <span className="ml-1 text-xs font-bold tracking-wider text-brand-ink">
+                성함
+              </span>
               <input
                 type="text"
                 {...form.register("name")}
@@ -104,43 +258,11 @@ export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
               <FieldError id="rsvp-name-error" message={errors.name?.message} />
             </label>
 
-            <div className="space-y-1">
-              <p className="ml-1 text-[10px] tracking-widest text-brand-gold">참석 여부</p>
-              <Controller
-                control={form.control}
-                name="attendance"
-                render={({ field }) => (
-                  <div role="radiogroup" aria-label="참석 여부" className="grid grid-cols-2 gap-2">
-                    <AttendanceButton isActive={field.value === "yes"} onClick={() => field.onChange("yes")}>
-                      참석
-                    </AttendanceButton>
-                    <AttendanceButton
-                      isActive={field.value === "no"}
-                      onClick={() => field.onChange("no")}
-                      activeClassName="bg-brand-ink border-brand-ink"
-                    >
-                      불참
-                    </AttendanceButton>
-                  </div>
-                )}
-              />
-            </div>
-
             <label className="block space-y-1">
-              <span className="ml-1 text-[10px] tracking-widest text-brand-gold">참석 인원</span>
-              <select
-                {...form.register("guestCount", { valueAsNumber: true })}
-                className="w-full appearance-none rounded-md border border-brand-gold/20 bg-white px-3.5 py-2.5 text-sm focus:border-brand-gold focus:outline-none"
-              >
-                <option value={1}>본인 포함 1명</option>
-                <option value={2}>2명</option>
-                <option value={3}>3명</option>
-                <option value={4}>4명 이상</option>
-              </select>
-            </label>
-
-            <label className="block space-y-1">
-              <span className="ml-1 text-[10px] tracking-widest text-brand-gold">연락처</span>
+              <span className="ml-1 text-xs font-bold tracking-wider text-brand-ink">
+                연락처
+                {afterPartyAttendance === "yes" ? " (필수)" : " (선택)"}
+              </span>
               <input
                 type="tel"
                 {...form.register("phone")}
@@ -154,29 +276,14 @@ export function RsvpDialog({ onClose, onSubmitted }: RsvpDialogProps) {
                     ? "border-brand-ink/60 focus:border-brand-ink"
                     : "border-brand-gold/20 focus:border-brand-gold",
                 )}
-                placeholder="연락처 선택 입력"
+                placeholder={
+                  afterPartyAttendance === "yes"
+                    ? "뒤풀이 안내를 받을 연락처"
+                    : "연락처 선택 입력"
+                }
                 autoComplete="tel"
               />
               <FieldError id="rsvp-phone-error" message={errors.phone?.message} />
-            </label>
-
-            <label className="block space-y-1">
-              <span className="ml-1 text-[10px] tracking-widest text-brand-gold">전하고 싶은 말</span>
-              <textarea
-                {...form.register("message")}
-                maxLength={200}
-                rows={3}
-                aria-invalid={isMessageInvalid}
-                aria-describedby={errors.message ? "rsvp-message-error" : undefined}
-                className={cn(
-                  "w-full resize-none rounded-md border bg-brand-beige/30 px-3.5 py-2.5 text-sm leading-6 focus:outline-none",
-                  isMessageInvalid
-                    ? "border-brand-ink/60 focus:border-brand-ink"
-                    : "border-brand-gold/20 focus:border-brand-gold",
-                )}
-                placeholder="전하고 싶은 말 선택 입력"
-              />
-              <FieldError id="rsvp-message-error" message={errors.message?.message} />
             </label>
 
             <input
