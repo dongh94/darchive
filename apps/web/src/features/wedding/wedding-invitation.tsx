@@ -18,7 +18,6 @@ import { LocationSection } from "./components/location-section";
 import { RsvpDialog } from "./components/rsvp-dialog";
 import { WeddingQueryProvider } from "./components/wedding-query-provider";
 import { downloadWeddingCalendar } from "./utils/calendar";
-import { getWeddingDDay } from "./utils/date";
 import { shareWeddingInvitation } from "./utils/share";
 
 export function WeddingInvitation() {
@@ -27,7 +26,6 @@ export function WeddingInvitation() {
   const [isGuestbookViewerOpen, setIsGuestbookViewerOpen] = useState(false);
   const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
   const rsvpSuccessTimerRef = useRef<number | null>(null);
-  const [dDay] = useState(getWeddingDDay);
   const { scrollYProgress } = useScroll();
   const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
@@ -91,7 +89,7 @@ export function WeddingInvitation() {
         <Divider />
         <CoupleProfileSection />
         <Divider />
-        <CalendarSection dDay={dDay} />
+        <CalendarSection />
         <Divider />
         <GallerySection />
         <Divider />

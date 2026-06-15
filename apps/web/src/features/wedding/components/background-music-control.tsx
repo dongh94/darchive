@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
-import { cn } from "../lib/utils";
+import { cn } from "@/shared/lib/cn";
 
 const backgroundMusicUrl = "/audio/from-the-start.mp3";
 

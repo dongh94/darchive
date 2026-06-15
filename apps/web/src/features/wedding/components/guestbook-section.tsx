@@ -10,8 +10,8 @@ import {
   guestbookCreateInputSchema,
   type GuestbookCreateInput,
 } from "@darchive/api/schemas";
+import { cn } from "@/shared/lib/cn";
 import { trpc } from "@/shared/lib/trpc";
-import { cn } from "../lib/utils";
 import { SectionHeader } from "./section-header";
 import { GuestbookEntryCard } from "./guestbook-entry-card";
 

@@ -51,7 +51,7 @@ export const weddingContent = {
   event: {
     title: "김동희 & 변지연 결혼식",
     description: "김동희 & 변지연의 소중한 결혼식에 초대합니다.",
-    dateTime: "2026-09-12T16:40:00",
+    dateTime: "2026-09-12T16:40:00+09:00",
     dateLabel: "2026. 09. 12",
     dayTimeLabel: "토요일 오후 4시 40분",
     heroDateLabel: "2026. 09. 12 SAT PM 4:40",

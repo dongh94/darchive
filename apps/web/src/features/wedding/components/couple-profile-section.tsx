@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
+import { cn } from "@/shared/lib/cn";
 import { weddingContent } from "../data/wedding-content";
-import { cn } from "../lib/utils";
 
 type CoupleProfile = (typeof weddingContent.couple)[keyof typeof weddingContent.couple];
 

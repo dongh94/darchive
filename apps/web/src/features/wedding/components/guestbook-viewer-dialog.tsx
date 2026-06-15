@@ -4,9 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import { keepPreviousData } from "@tanstack/react-query";
 import { motion } from "motion/react";
 import { Loader2, Search, X } from "lucide-react";
+import { cn } from "@/shared/lib/cn";
 import { trpc } from "@/shared/lib/trpc";
 import { useDebouncedValue } from "@/shared/lib/use-debounced-value";
-import { cn } from "../lib/utils";
 import { useBodyScrollLock } from "../lib/use-body-scroll-lock";
 import { GuestbookEntryCard } from "./guestbook-entry-card";
 

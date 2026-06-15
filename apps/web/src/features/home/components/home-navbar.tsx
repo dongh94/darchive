@@ -1,28 +1,27 @@
 "use client";
 
 import Link from "next/link";
+import { useSyncExternalStore } from "react";
 import { Moon, Search, Sun } from "lucide-react";
-import { useEffect, useState } from "react";
 import { homeNavItems } from "../data/home-content";
 
 type Theme = "light" | "dark";
 
-function getInitialTheme(): Theme {
-  if (typeof window === "undefined") {
-    return "light";
-  }
-
-  const savedTheme = window.localStorage.getItem("theme");
-
-  if (savedTheme === "dark" || savedTheme === "light") {
-    return savedTheme;
-  }
-
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+function getDocumentTheme(): Theme {
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
 }
 
-function applyTheme(theme: Theme) {
-  const root = window.document.documentElement;
+function subscribeToDocumentTheme(notify: () => void) {
+  const observer = new MutationObserver(notify);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
+  return () => observer.disconnect();
+}
+
+function setDocumentTheme(theme: Theme) {
+  const root = document.documentElement;
 
   root.classList.remove("light", "dark");
   root.classList.add(theme);
@@ -30,14 +29,16 @@ function applyTheme(theme: Theme) {
 }
 
 export function HomeNavbar() {
-  const [theme, setTheme] = useState<Theme>("light");
+  const theme = useSyncExternalStore<Theme | null>(
+    subscribeToDocumentTheme,
+    getDocumentTheme,
+    () => null,
+  );
 
-  useEffect(() => {
-    const initialTheme = getInitialTheme();
-
-    setTheme(initialTheme);
-    applyTheme(initialTheme);
-  }, []);
+  const toggleLabel =
+    theme === null
+      ? "Toggle theme"
+      : `Switch to ${theme === "light" ? "dark" : "light"} theme`;
 
   return (
     <nav className="home-glass fixed inset-x-0 top-0 z-50 flex h-16 items-center justify-between px-5 md:px-12">
@@ -69,18 +70,11 @@ export function HomeNavbar() {
         </button>
         <button
           type="button"
-          onClick={() =>
-            setTheme((currentTheme) => {
-              const nextTheme = currentTheme === "light" ? "dark" : "light";
-
-              applyTheme(nextTheme);
-              return nextTheme;
-            })
-          }
+          onClick={() => setDocumentTheme(getDocumentTheme() === "light" ? "dark" : "light")}
           className="inline-flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-muted"
-          aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
+          aria-label={toggleLabel}
         >
-          {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+          {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
         </button>
       </div>
     </nav>
