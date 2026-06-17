@@ -6,7 +6,7 @@ export default async function AdminRoute() {
   await requireAdmin();
 
   return (
-    <AdminShell title="Overview" description="DArchive의 운영 영역을 한 곳에서 관리합니다.">
+    <AdminShell activeHref="/admin" title="Overview" description="DArchive의 운영 영역을 한 곳에서 관리합니다.">
       <AdminDashboard />
     </AdminShell>
   );

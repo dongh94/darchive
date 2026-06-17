@@ -6,7 +6,7 @@ export default async function AdminProjectsRoute() {
   await requireAdmin();
 
   return (
-    <AdminShell title="Projects" description="앞으로 stock 등 프로젝트 앱의 운영 도구가 들어올 자리입니다.">
+    <AdminShell activeHref="/admin/projects" title="Projects" description="앞으로 stock 등 프로젝트 앱의 운영 도구가 들어올 자리입니다.">
       <AdminPlaceholderPage title="Projects admin" />
     </AdminShell>
   );

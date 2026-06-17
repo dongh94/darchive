@@ -9,17 +9,28 @@ export default async function AdminWeddingRoute({
   searchParams?: Promise<{
     afterParty?: string;
     attendance?: string;
+    guestbookPage?: string;
     q?: string;
+    rsvpPage?: string;
   }>;
 }) {
   await requireAdmin();
 
-  const caller = await createServerCaller();
-  const overview = await caller.admin.weddingOverview();
   const filters = await searchParams;
+  const caller = await createServerCaller();
+  const overview = await caller.admin.weddingOverview({
+    afterParty:
+      filters?.afterParty === "YES" || filters?.afterParty === "NO" || filters?.afterParty === "UNDECIDED"
+        ? filters.afterParty
+        : undefined,
+    attendance: filters?.attendance === "YES" || filters?.attendance === "NO" ? filters.attendance : undefined,
+    guestbookPage: filters?.guestbookPage,
+    q: filters?.q,
+    rsvpPage: filters?.rsvpPage,
+  });
 
   return (
-    <AdminShell title="Wedding" description="RSVP와 방명록 데이터를 운영 관점에서 확인합니다.">
+    <AdminShell activeHref="/admin/wedding" title="Wedding" description="RSVP와 방명록 데이터를 운영 관점에서 확인합니다.">
       <WeddingAdminPage overview={overview} filters={filters} />
     </AdminShell>
   );

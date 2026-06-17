@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { BarChart3, Boxes, Home, LogOut, Settings, Sparkles } from "lucide-react";
+import { cn } from "@/shared/lib/cn";
 import { logoutAdmin } from "../lib/actions";
 
 const navigation = [
@@ -11,10 +12,12 @@ const navigation = [
 ] as const;
 
 export function AdminShell({
+  activeHref,
   children,
   title,
   description,
 }: {
+  activeHref: string;
   children: ReactNode;
   title: string;
   description: string;
@@ -49,12 +52,17 @@ export function AdminShell({
           <nav className="grid gap-2">
             {navigation.map((item) => {
               const Icon = item.icon;
+              const isActive = item.href === activeHref;
 
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold text-foreground/60 transition hover:bg-muted hover:text-foreground"
+                  className={cn(
+                    "flex h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition hover:bg-muted hover:text-foreground",
+                    isActive ? "bg-muted text-foreground shadow-sm" : "text-foreground/60",
+                  )}
+                  aria-current={isActive ? "page" : undefined}
                 >
                   <Icon className="h-4 w-4" />
                   {item.title}
