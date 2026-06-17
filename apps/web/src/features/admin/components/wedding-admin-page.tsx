@@ -1,4 +1,6 @@
-import { CalendarDays, Download, MessageSquareText, PartyPopper, Users } from "lucide-react";
+import Link from "next/link";
+import { CalendarDays, Download, MessageSquareText, PartyPopper, RotateCcw, Search, Users } from "lucide-react";
+import { setWeddingGuestbookVisibility } from "../lib/wedding-actions";
 
 type WeddingOverview = {
   summary: {
@@ -31,6 +33,12 @@ type WeddingOverview = {
     isVisible: boolean;
     createdAt: string;
   }>;
+};
+
+type WeddingAdminFilters = {
+  afterParty?: string;
+  attendance?: string;
+  q?: string;
 };
 
 const attendanceLabels = {
@@ -72,9 +80,33 @@ function createRsvpCsvHref(rsvps: WeddingOverview["rsvps"]) {
   return `data:text/csv;charset=utf-8,${encodeURIComponent(csv)}`;
 }
 
-export function WeddingAdminPage({ overview }: { overview: WeddingOverview }) {
+function filterRsvps(rsvps: WeddingOverview["rsvps"], filters: WeddingAdminFilters | undefined) {
+  const query = filters?.q?.trim().toLowerCase();
+  const attendance = filters?.attendance;
+  const afterParty = filters?.afterParty;
+
+  return rsvps.filter((rsvp) => {
+    const matchesQuery = query
+      ? [rsvp.name, rsvp.phone].some((value) => value?.toLowerCase().includes(query))
+      : true;
+    const matchesAttendance = attendance === "YES" || attendance === "NO" ? rsvp.attendance === attendance : true;
+    const matchesAfterParty =
+      afterParty === "YES" || afterParty === "NO" || afterParty === "UNDECIDED" ? rsvp.afterPartyAttendance === afterParty : true;
+
+    return matchesQuery && matchesAttendance && matchesAfterParty;
+  });
+}
+
+export function WeddingAdminPage({
+  filters,
+  overview,
+}: {
+  filters?: WeddingAdminFilters;
+  overview: WeddingOverview;
+}) {
   const { summary } = overview;
-  const rsvpCsvHref = createRsvpCsvHref(overview.rsvps);
+  const filteredRsvps = filterRsvps(overview.rsvps, filters);
+  const rsvpCsvHref = createRsvpCsvHref(filteredRsvps);
 
   const stats = [
     {
@@ -132,7 +164,9 @@ export function WeddingAdminPage({ overview }: { overview: WeddingOverview }) {
         <div className="flex flex-col gap-4 border-b border-border p-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="font-display text-2xl font-bold tracking-tight">RSVP</h2>
-            <p className="mt-1 text-sm text-foreground/50">최근 응답순으로 표시합니다.</p>
+            <p className="mt-1 text-sm text-foreground/50">
+              {filteredRsvps.length.toLocaleString("ko-KR")} / {overview.rsvps.length.toLocaleString("ko-KR")} responses
+            </p>
           </div>
           <a
             href={rsvpCsvHref}
@@ -143,6 +177,51 @@ export function WeddingAdminPage({ overview }: { overview: WeddingOverview }) {
             CSV
           </a>
         </div>
+        <form action="/admin/wedding" className="grid gap-3 border-b border-border bg-muted/20 p-5 lg:grid-cols-[minmax(220px,1fr)_160px_180px_auto_auto]">
+          <label className="relative block">
+            <span className="sr-only">Search RSVP</span>
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/35" />
+            <input
+              name="q"
+              defaultValue={filters?.q ?? ""}
+              placeholder="Search name or phone"
+              className="h-11 w-full rounded-lg border border-border bg-card pl-10 pr-3 text-sm outline-none transition focus:border-[#4285f4]"
+            />
+          </label>
+          <label>
+            <span className="sr-only">Attendance</span>
+            <select
+              name="attendance"
+              defaultValue={filters?.attendance ?? ""}
+              className="h-11 w-full rounded-lg border border-border bg-card px-3 text-sm font-semibold outline-none transition focus:border-[#4285f4]"
+            >
+              <option value="">All attendance</option>
+              <option value="YES">Attending</option>
+              <option value="NO">Declined</option>
+            </select>
+          </label>
+          <label>
+            <span className="sr-only">After party</span>
+            <select
+              name="afterParty"
+              defaultValue={filters?.afterParty ?? ""}
+              className="h-11 w-full rounded-lg border border-border bg-card px-3 text-sm font-semibold outline-none transition focus:border-[#4285f4]"
+            >
+              <option value="">All after party</option>
+              <option value="YES">After party yes</option>
+              <option value="NO">After party no</option>
+              <option value="UNDECIDED">After party undecided</option>
+            </select>
+          </label>
+          <button type="submit" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90">
+            <Search className="h-4 w-4" />
+            Filter
+          </button>
+          <Link href="/admin/wedding" className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-border bg-card px-4 text-sm font-semibold transition hover:bg-muted">
+            <RotateCcw className="h-4 w-4" />
+            Reset
+          </Link>
+        </form>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[840px] text-left text-sm">
             <thead className="bg-muted/60 text-xs uppercase tracking-wide text-foreground/45">
@@ -156,8 +235,8 @@ export function WeddingAdminPage({ overview }: { overview: WeddingOverview }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {overview.rsvps.length > 0 ? (
-                overview.rsvps.map((rsvp) => (
+              {filteredRsvps.length > 0 ? (
+                filteredRsvps.map((rsvp) => (
                   <tr key={rsvp.id}>
                     <td className="px-5 py-4 font-semibold">{rsvp.name}</td>
                     <td className="px-5 py-4">{attendanceLabels[rsvp.attendance]}</td>
@@ -173,7 +252,7 @@ export function WeddingAdminPage({ overview }: { overview: WeddingOverview }) {
               ) : (
                 <tr>
                   <td colSpan={6} className="px-5 py-10 text-center text-foreground/45">
-                    아직 RSVP 응답이 없습니다.
+                    조건에 맞는 RSVP 응답이 없습니다.
                   </td>
                 </tr>
               )}
@@ -190,16 +269,26 @@ export function WeddingAdminPage({ overview }: { overview: WeddingOverview }) {
         <div className="divide-y divide-border">
           {overview.guestbookEntries.length > 0 ? (
             overview.guestbookEntries.map((entry) => (
-              <article key={entry.id} className="grid gap-3 p-5 md:grid-cols-[180px_minmax(0,1fr)_120px]">
+              <article key={entry.id} className="grid gap-4 p-5 md:grid-cols-[180px_minmax(0,1fr)_180px]">
                 <div>
                   <p className="font-semibold">{entry.name}</p>
                   <p className="mt-1 text-xs text-foreground/45">{formatDate(entry.createdAt)}</p>
                 </div>
                 <p className="min-w-0 whitespace-pre-line text-sm leading-6 text-foreground/70">{entry.message}</p>
-                <div className="md:text-right">
+                <div className="flex flex-wrap items-start gap-2 md:justify-end">
                   <span className={`inline-flex rounded-lg px-2.5 py-1 text-xs font-bold ${entry.isVisible ? "bg-[#34a853]/10 text-[#1f7a3f]" : "bg-muted text-foreground/45"}`}>
                     {entry.isVisible ? "Visible" : "Hidden"}
                   </span>
+                  <form action={setWeddingGuestbookVisibility}>
+                    <input type="hidden" name="id" value={entry.id} />
+                    <input type="hidden" name="isVisible" value={entry.isVisible ? "false" : "true"} />
+                    <button
+                      type="submit"
+                      className="inline-flex rounded-lg border border-border bg-card px-2.5 py-1 text-xs font-bold transition hover:bg-muted"
+                    >
+                      {entry.isVisible ? "Hide" : "Restore"}
+                    </button>
+                  </form>
                 </div>
               </article>
             ))

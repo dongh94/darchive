@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 import { AfterPartyAttendance, getPrisma, WeddingAttendance } from "@darchive/db";
 import { publicProcedure, router } from "../trpc";
 
@@ -11,6 +12,23 @@ const adminProcedure = publicProcedure.use(({ ctx, next }) => {
 });
 
 export const adminRouter = router({
+  weddingGuestbookSetVisibility: adminProcedure
+    .input(
+      z.object({
+        id: z.string().min(1),
+        isVisible: z.boolean(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const entry = await getPrisma().weddingGuestbookEntry.update({
+        where: { id: input.id },
+        data: { isVisible: input.isVisible },
+        select: { id: true, isVisible: true },
+      });
+
+      return entry;
+    }),
+
   weddingOverview: adminProcedure.query(async () => {
     const prisma = getPrisma();
 
