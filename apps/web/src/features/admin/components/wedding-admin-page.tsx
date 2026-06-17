@@ -64,6 +64,10 @@ function escapeCsvCell(value: string | number | null | undefined) {
   return `"${stringValue.replaceAll('"', '""')}"`;
 }
 
+function getPhoneDigits(value: string | null) {
+  return value?.replace(/\D/g, "") ?? null;
+}
+
 function createRsvpCsvHref(rsvps: WeddingOverview["rsvps"]) {
   const headers = ["name", "attendance", "guestCount", "afterPartyAttendance", "afterPartyGuestCount", "phone", "createdAt"];
   const rows = rsvps.map((rsvp) => [
@@ -72,7 +76,7 @@ function createRsvpCsvHref(rsvps: WeddingOverview["rsvps"]) {
     rsvp.attendance === "YES" ? rsvp.guestCount ?? 1 : "",
     rsvp.afterPartyAttendance ? afterPartyLabels[rsvp.afterPartyAttendance] : "",
     rsvp.afterPartyAttendance === "YES" ? rsvp.afterPartyGuestCount ?? 1 : "",
-    rsvp.phone,
+    getPhoneDigits(rsvp.phone),
     formatDate(rsvp.createdAt),
   ]);
   const csv = [headers, ...rows].map((row) => row.map(escapeCsvCell).join(",")).join("\n");
@@ -82,12 +86,13 @@ function createRsvpCsvHref(rsvps: WeddingOverview["rsvps"]) {
 
 function filterRsvps(rsvps: WeddingOverview["rsvps"], filters: WeddingAdminFilters | undefined) {
   const query = filters?.q?.trim().toLowerCase();
+  const queryDigits = query?.replace(/\D/g, "");
   const attendance = filters?.attendance;
   const afterParty = filters?.afterParty;
 
   return rsvps.filter((rsvp) => {
     const matchesQuery = query
-      ? [rsvp.name, rsvp.phone].some((value) => value?.toLowerCase().includes(query))
+      ? rsvp.name.toLowerCase().includes(query) || Boolean(queryDigits && getPhoneDigits(rsvp.phone)?.includes(queryDigits))
       : true;
     const matchesAttendance = attendance === "YES" || attendance === "NO" ? rsvp.attendance === attendance : true;
     const matchesAfterParty =
@@ -245,7 +250,7 @@ export function WeddingAdminPage({
                       {rsvp.afterPartyAttendance ? afterPartyLabels[rsvp.afterPartyAttendance] : "-"}
                       {rsvp.afterPartyAttendance === "YES" ? ` / ${rsvp.afterPartyGuestCount ?? 1}` : ""}
                     </td>
-                    <td className="px-5 py-4 text-foreground/60">{rsvp.phone ?? "-"}</td>
+                    <td className="px-5 py-4 text-foreground/60">{getPhoneDigits(rsvp.phone) ?? "-"}</td>
                     <td className="px-5 py-4 text-foreground/50">{formatDate(rsvp.createdAt)}</td>
                   </tr>
                 ))
